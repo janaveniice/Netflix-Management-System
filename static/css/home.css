@@ -1,0 +1,63 @@
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Montserrat;
+      background-color: #000;
+      color: #fff;
+    }
+
+    /* Heading styles */
+    h3 {
+      margin-bottom: 8px;
+    }
+
+    /* Flex container for each carousel */
+    .carousel {
+      display: flex;
+      flex-direction: row;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+    }
+
+    /*DONT SHOW THE SCROLLER SO UGLY*/
+    .carousel::-webkit-scrollbar {
+      display: none;
+    }
+
+    .carousel > div {
+      flex: 0 0 auto;
+      width:300px;
+      height:  180px;
+      border-radius:12px;
+    }
+
+    /* Relative positioning for navigation buttons */
+    .relative {
+      position: relative;
+    }
+
+    /* Styles for carousel buttons */
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0, 0, 0, 0.5);
+      border: none;
+      color: white;
+      font-size:20px;
+      padding: 10px;
+      cursor: pointer;
+      z-index: 1;
+    }
+
+    .left-btn {
+      left: 0;
+    }
+
+    .right-btn {
+      right: 0;
+    }
+
+    .carousel-btn:hover {
+      background-color: rgba(0, 0, 0, 0.8);
+    }

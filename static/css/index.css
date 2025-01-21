@@ -1,0 +1,60 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Montserrat';
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: url('/static/images/dune.jpeg') no-repeat center center fixed;
+    background-size: cover;
+}
+
+.login-container {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    width: 300px;
+    text-align: center;
+}
+
+.login-container h2 {
+    color: white;
+    margin-bottom: 20px;
+}
+
+.login-container input[type="email"],
+.login-container input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-family: 'Montserrat';
+}
+
+.login-container input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    margin: 20px 0;
+    border: none;
+    border-radius: 5px;
+    background: white;
+    color: black;
+    cursor: pointer;
+    font-family: 'Montserrat';
+}
+
+.login-container input[type="submit"]:hover {
+    background: #ddd;
+}
+
+.login-container a {
+    color: #ddd;
+    text-decoration: none;
+}
+
+.login-container a:hover {
+    text-decoration: underline;
+}

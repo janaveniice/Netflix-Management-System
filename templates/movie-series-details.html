@@ -1,0 +1,1034 @@
+{% extends "base.html" %} {% block title %}Details{% endblock %} {% block
+extra_head %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/review-form.css') }}"
+/>
+{% endblock %} {% block content %}
+<!-- HERO COMPONENT -->
+<style>
+  .clicked {
+    border-color: white !important;
+  }
+</style>
+<div
+  class="relative bg-center bg-cover h-lvh"
+  style="background-image: url('{{ movie.image }}')"
+>
+  <div class="absolute inset-0 bg-black opacity-50"></div>
+  <div class="flex flex-col justify-end h-full">
+    <!-- movie details -->
+    <div class="relative flex flex-col h-full justify-center px-16">
+      <div class="">
+        <h1 class="font-extrabold text-6xl text-white">{{movie.title}}</h1>
+        <p class="pt-6 text-neutral-400">
+          {{movie.release_year}} ‧ {% if movie.runtime %}{{ movie.runtime // 60
+          }}H {{ movie.runtime % 60 }}Min {% elif movie.season
+          %}{{movie.season}} Seasons{% endif %}
+        </p>
+        <!-- Genre -->
+        <div class="flex flex-row gap-4 pt-4 text-white">
+          {% for name in genre_names %}
+          <button
+            class="bg-white bg-opacity-30 px-2 py-1 border-white border-[1px] rounded-md text-sm"
+          >
+            {{name}}
+          </button>
+          {% endfor %}
+        </div>
+        <p class="pt-6 text-white w-1/3">{{movie.description}}</p>
+      </div>
+
+      <!-- Buttons -->
+      <!-- Add to watchlist btn-->
+      <div class="pt-8 flex flex-row space-x-6">
+        <form action="/add-to-watchlist" method="POST">
+          <input type="hidden" name="show_id" value="{{ movie.show_id }}" />
+          <button
+            type="submit"
+            class="inline-flex items-center gap-x-4 rounded-md bg-white px-6 py-2 shadow-sm hover:bg-gray-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+          >
+            <span class="">
+              <svg
+                width="22"
+                height="21"
+                viewBox="0 0 22 21"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9.288 20.376V0.0239983H12.312V20.376H9.288ZM0.36 11.64V8.808H21.24V11.64H0.36Z"
+                  fill="black"
+                />
+              </svg>
+            </span>
+            <span class="text-black font-semibold text-lg">Watchlist</span>
+          </button>
+        </form>
+
+        <!-- Add to watch history btn-->
+        <form action="/add-to-watchhistory" method="POST">
+          <input type="hidden" name="show_id" value="{{ movie.show_id }}" />
+          <button
+            type="submit"
+            class="inline-flex items-center gap-x-4 rounded-md bg-black bg-opacity-60 px-6 py-2 shadow-sm hover:bg-gray-400 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+          >
+            <span class="">
+              <svg
+                width="25"
+                height="25"
+                viewBox="0 0 30 30"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M26.25 8.75L11.25 23.75L4.375 16.875L6.1375 15.1125L11.25 20.2125L24.4875 6.9875L26.25 8.75Z"
+                  fill="white"
+                />
+              </svg>
+            </span>
+            <span class="text-white font-medium text-lg">Watched</span>
+          </button>
+        </form>
+
+        <!-- Ratings button -->
+        <!-- Like btn -->
+        <div class="flex gap-3">
+          <form action="/add-rating" method="POST">
+            {% if watch_history.like_dislike == True %}
+            <button
+              type="submit"
+              class="inline-flex items-center gap-x-4 rounded-full bg-white backdrop-filter backdrop-blur shadow-sm hover:bg-gray-400 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 relative w-11 h-11"
+            >
+              <input type="hidden" name="show_id" value="{{ movie.show_id }}" />
+              <input type="hidden" name="rating" value="like" />
+              <div class="flex items-center justify-center w-full h-full">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 18 18"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g clip-path="url(#clip0_262_11)">
+                    <path
+                      d="M8.8 0H9.6V2.4L12 8V14.4C12 14.8243 11.8314 15.2313 11.5314 15.5314C11.2313 15.8314 10.8243 16 10.4 16H4C3.12 16 2.152 15.328 1.84 14.496L0 9.6V8C0 7.57565 0.168571 7.16869 0.468629 6.86863C0.768687 6.56857 1.17565 6.4 1.6 6.4H7.2V1.6C7.2 1.17565 7.36857 0.768687 7.66863 0.468629C7.96869 0.168571 8.37565 0 8.8 0ZM13.6 8H16V16H13.6V8Z"
+                      fill="black"
+                    />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_262_11">
+                      <rect width="18" height="18" fill="black" />
+                    </clipPath>
+                  </defs>
+                </svg>
+              </div>
+            </button>
+            {%else%}
+
+            <button
+              type="submit"
+              class="inline-flex items-center gap-x-4 rounded-full bg-black bg-opacity-60 backdrop-filter backdrop-blur shadow-sm hover:bg-gray-400 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 relative w-11 h-11"
+            >
+              <input type="hidden" name="show_id" value="{{ movie.show_id }}" />
+              <input type="hidden" name="rating" value="like" />
+              <div class="flex items-center justify-center w-full h-full">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 18 18"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g clip-path="url(#clip0_262_11)">
+                    <path
+                      d="M8.8 0H9.6V2.4L12 8V14.4C12 14.8243 11.8314 15.2313 11.5314 15.5314C11.2313 15.8314 10.8243 16 10.4 16H4C3.12 16 2.152 15.328 1.84 14.496L0 9.6V8C0 7.57565 0.168571 7.16869 0.468629 6.86863C0.768687 6.56857 1.17565 6.4 1.6 6.4H7.2V1.6C7.2 1.17565 7.36857 0.768687 7.66863 0.468629C7.96869 0.168571 8.37565 0 8.8 0ZM13.6 8H16V16H13.6V8Z"
+                      fill="white"
+                    />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_262_11">
+                      <rect width="18" height="18" fill="white" />
+                    </clipPath>
+                  </defs>
+                </svg>
+              </div>
+            </button>
+            {% endif %}
+          </form>
+
+          <!-- Dislike btn -->
+          <form action="/add-rating" method="POST">
+            {% if watch_history.like_dislike == False %}
+            <button
+              type="submit"
+              class="inline-flex items-center gap-x-4 rounded-full bg-white backdrop-filter backdrop-blur shadow-sm hover:bg-gray-400 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 relative w-11 h-11"
+            >
+              <input type="hidden" name="show_id" value="{{ movie.show_id }}" />
+              <input type="hidden" name="rating" value="dislike" />
+              <div class="flex items-center justify-center w-full h-full">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 18 18"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g clip-path="url(#clip0_267_17)">
+                    <path
+                      d="M9.9 18C9.42261 18 8.96477 17.8104 8.62721 17.4728C8.28964 17.1352 8.1 16.6774 8.1 16.2V10.8H1.8C1.32261 10.8 0.864773 10.6104 0.527208 10.2728C0.189642 9.93523 0 9.47739 0 9V7.2L2.07 1.692C2.27633 1.21098 2.6134 0.797444 3.04294 0.498358C3.47248 0.199273 3.97727 0.0266182 4.5 0L11.7 0C12.1774 0 12.6352 0.189642 12.9728 0.527208C13.3104 0.864773 13.5 1.32261 13.5 1.8V9L10.8 15.3V18H9.9ZM15.3 9V0H18V9H15.3Z"
+                      fill="black"
+                    />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_267_17">
+                      <rect width="18" height="18" fill="white" />
+                    </clipPath>
+                  </defs>
+                </svg>
+              </div>
+            </button>
+            {% else %}
+
+            <button
+              type="submit"
+              class="inline-flex items-center gap-x-4 rounded-full bg-black bg-opacity-60 backdrop-filter backdrop-blur shadow-sm hover:bg-gray-400 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 relative w-11 h-11"
+            >
+              <input type="hidden" name="show_id" value="{{ movie.show_id }}" />
+              <input type="hidden" name="rating" value="dislike" />
+              <div class="flex items-center justify-center w-full h-full">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 18 18"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g clip-path="url(#clip0_262_7)">
+                    <path
+                      d="M9.9 18C9.42261 18 8.96477 17.8104 8.62721 17.4728C8.28964 17.1352 8.1 16.6774 8.1 16.2V10.8H1.8C1.32261 10.8 0.864773 10.6104 0.527208 10.2728C0.189642 9.93523 0 9.47739 0 9V7.2L2.07 1.692C2.27633 1.21098 2.6134 0.797444 3.04294 0.498358C3.47248 0.199273 3.97727 0.0266182 4.5 0L11.7 0C12.1774 0 12.6352 0.189642 12.9728 0.527208C13.3104 0.864773 13.5 1.32261 13.5 1.8V9L10.8 15.3V18H9.9ZM15.3 9V0H18V9H15.3Z"
+                      fill="white"
+                    />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_262_7">
+                      <rect width="18" height="18" fill="white" />
+                    </clipPath>
+                  </defs>
+                </svg>
+              </div>
+            </button>
+            {% endif %}
+          </form>
+        </div>
+      </div>
+
+      <div>
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %} {% for category, message in messages %}
+        <div class="alert alert-{{ category }} py-2" style="color: red">
+          {{ message }}
+        </div>
+        {% endfor %} {% endif %} {% endwith %}
+      </div>
+    </div>
+
+    <div class="flex px-16 gap-16">
+      <div
+        id="overviewBtn"
+        class="border-b-4 border-white z-10 cursor-pointer"
+        onclick="toggleSection(this)"
+      >
+        <p class="font-bold text-lg tracking-wider py-4">OVERVIEW</p>
+      </div>
+      <div
+        id="reviewsBtn"
+        class="border-b-4 border-transparent z-10 cursor-pointer"
+        onclick="toggleSection(this)"
+      >
+        <p class="font-bold text-lg tracking-wider py-4">REVIEWS</p>
+      </div>
+    </div>
+  </div>
+  <div
+    class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-bgPurple to-transparent h-12"
+  ></div>
+
+  <!-- Details-->
+  <section id="overviewSection" class="h-auto pt-10 pb-20 px-16">
+    <div class="flex flex-row gap-14 justify-start">
+      <!-- Description -->
+      <div class="w-1/2">
+        <h1 class="uppercase text-txtPurple text-lg font-bold">Description</h1>
+        <p>{{movie.description}}</p>
+      </div>
+
+      <!-- Release date / Genre -->
+      <div class="flex flex-col w-1/4">
+        <h1 class="uppercase text-txtPurple text-lg font-bold">Release date</h1>
+        <p>{{movie.release_year}}</p>
+        <h1 class="uppercase text-txtPurple text-lg font-bold pt-8">Genre</h1>
+        {%for genre in genre_names%}
+        <p class="py-1">{{genre}}</p>
+        {%endfor%}
+      </div>
+
+      <!-- Casts -->
+      <div class="w-1/4">
+        <h1 class="uppercase text-txtPurple text-lg font-bold">Starring</h1>
+        {% for cast in cast_names %}
+        <p class="py-1">{{cast}}</p>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews-->
+  <section id="reviewsSection" class="hidden h-auto pt-10 pb-20 px-16">
+    <div class="flex flex-row gap-28">
+      <div class="w-3/4">
+        <!-- Popular reviews -->
+        <div>
+          <!-- header -->
+          <div class="flex flew-row justify-between">
+            <h1 class="uppercase text-txtPurple text-lg font-bold">
+              POPULAR REVIEWS
+            </h1>
+            <a href="/reviews/{{movie.show_id}}"
+              ><p class="uppercase text-txtPurple text-lg">MORE</p></a
+            >
+          </div>
+
+          <!-- Each review starts here -->
+          <!-- START FOR LOOP HERE-->
+          {% if popular_reviews %} {% for popular_review in popular_reviews %}
+          <div class="flex flex-row h-auto pt-4 pb-6 border-b border-txtPurple">
+            <div class="profile pic">
+              {% if popular_review and popular_review.profile_pic %}
+              <img
+                src="{{ url_for('static', filename=popular_review.profile_pic.replace('static/', '')) }}"
+                alt="Profile Picture"
+                class="w-12 h-12 rounded-full mr-8"
+              />
+              {% endif %}
+            </div>
+
+            <div class="">
+              <h1 class="font-semibold">
+                {{popular_review['user_id']}} &nbsp;&nbsp;&nbsp;
+                <span class="font-normal text-txtPurple"
+                  >{{popular_review['created_at'].strftime('%d %B %Y')}}</span
+                >
+              </h1>
+              <p>
+                <!-- Dynamically add stars here -->
+                {% for _ in range(popular_review['stars']) %}
+                <span class="stars">★</span>
+                {% endfor %}
+              </p>
+              <p class="pt-4">{{popular_review.review_message}}</p>
+
+              <!-- Likes -->
+              <div class="flex flex-row gap-5 pt-4 text-sm">
+                {% if popular_review['status'] == "noLike" %}
+                <button
+                  class="flex gap-2"
+                  onclick="likeReview('{{ popular_review['_id'] }}', 'like')"
+                >
+                  <div>
+                    <svg
+                      width="21"
+                      height="20"
+                      viewBox="0 0 21 20"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M10.6043 16.3229L10.5002 16.4271L10.3856 16.3229C5.43766 11.8333 2.16683 8.86458 2.16683 5.85417C2.16683 3.77083 3.72933 2.20833 5.81266 2.20833C7.41683 2.20833 8.97933 3.25 9.53141 4.66667H11.4689C12.021 3.25 13.5835 2.20833 15.1877 2.20833C17.271 2.20833 18.8335 3.77083 18.8335 5.85417C18.8335 8.86458 15.5627 11.8333 10.6043 16.3229ZM15.1877 0.125C13.3752 0.125 11.6356 0.96875 10.5002 2.29167C9.36475 0.96875 7.62516 0.125 5.81266 0.125C2.60433 0.125 0.0834961 2.63542 0.0834961 5.85417C0.0834961 9.78125 3.62516 13 8.98975 17.8646L10.5002 19.2396L12.0106 17.8646C17.3752 13 20.9168 9.78125 20.9168 5.85417C20.9168 2.63542 18.396 0.125 15.1877 0.125Z"
+                        fill="white"
+                      />
+                    </svg>
+                  </div>
+                  <p>Like review</p>
+                </button>
+
+                {% else %}
+                <!-- IF LIKED -->
+                <button
+                  class="flex gap-2"
+                  onclick="likeReview('{{ popular_review['_id'] }}', 'unlike')"
+                >
+                  <div>
+                    <svg
+                      width="21"
+                      height="20"
+                      viewBox="0 0 21 20"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M10.4167 19.1146L8.90625 17.7396C3.54167 12.875 0 9.65625 0 5.72917C0 2.51042 2.52083 0 5.72917 0C7.54167 0 9.28125 0.84375 10.4167 2.16667C11.5521 0.84375 13.2917 0 15.1042 0C18.3125 0 20.8333 2.51042 20.8333 5.72917C20.8333 9.65625 17.2917 12.875 11.9271 17.7396L10.4167 19.1146Z"
+                        fill="white"
+                      />
+                    </svg>
+                  </div>
+                  <p>Liked</p>
+                </button>
+                {% endif %}
+                <p class="text-txtPurple">
+                  {{popular_review['liked_by_count']}} Likes
+                </p>
+              </div>
+            </div>
+          </div>
+          {% endfor %} {% else %}
+          <div class="">
+            <h1 class="font-semibold">No reviews</h1>
+          </div>
+          <!-- END FOR LOOP HERE-->
+          {% endif %}
+        </div>
+
+        <!-- Recent reviews -->
+        <div class="pt-12">
+          <!-- header -->
+          <div class="flex flew-row justify-between">
+            <h1 class="uppercase text-txtPurple text-lg font-bold">
+              RECENT REVIEWS
+            </h1>
+            <a href="/reviews/{{movie.show_id}}"
+              ><p class="uppercase text-txtPurple text-lg">MORE</p></a
+            >
+          </div>
+
+          <!-- Each review starts here -->
+          <!-- START FOR LOOP HERE-->
+          {% if recent_reviews %} {% for recent_review in recent_reviews %}
+          <div class="flex flex-row h-auto pt-4 pb-6 border-b border-txtPurple">
+            <div class="profile pic">
+              {% if recent_review and recent_review.profile_pic %}
+              <img
+                src="{{ url_for('static', filename=recent_review.profile_pic.replace('static/', '')) }}"
+                alt="Profile Picture"
+                class="w-12 h-12 rounded-full mr-8"
+              />
+              {% else %}
+              <img
+                src="{{ url_for('static', filename='default-profile-pic.jpg') }}"
+                alt="Default Profile Picture"
+              />
+              {% endif %}
+            </div>
+
+            <div class="w-full">
+              <h1 class="font-semibold">
+                {{recent_review['user_id']}} &nbsp;&nbsp;&nbsp;
+                <span class="font-normal text-txtPurple"
+                  >{{recent_review['created_at'].strftime('%d %B %Y')}}</span
+                >
+              </h1>
+              <p>
+                {% for _ in range(recent_review['stars']) %}
+                <!-- Dynamically add stars here -->
+                <span class="stars">★</span>
+                {% endfor %}
+              </p>
+              <p class="pt-4">{{recent_review['review_message']}}</p>
+
+              <!-- Likes -->
+              <div class="flex flex-row gap-5 pt-4 text-sm">
+                {% if recent_review['status'] == "noLike" %}
+                <button
+                  class="flex gap-2"
+                  onclick="likeReview('{{ recent_review._id }}','like')"
+                >
+                  <div>
+                    <svg
+                      width="21"
+                      height="20"
+                      viewBox="0 0 21 20"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M10.6043 16.3229L10.5002 16.4271L10.3856 16.3229C5.43766 11.8333 2.16683 8.86458 2.16683 5.85417C2.16683 3.77083 3.72933 2.20833 5.81266 2.20833C7.41683 2.20833 8.97933 3.25 9.53141 4.66667H11.4689C12.021 3.25 13.5835 2.20833 15.1877 2.20833C17.271 2.20833 18.8335 3.77083 18.8335 5.85417C18.8335 8.86458 15.5627 11.8333 10.6043 16.3229ZM15.1877 0.125C13.3752 0.125 11.6356 0.96875 10.5002 2.29167C9.36475 0.96875 7.62516 0.125 5.81266 0.125C2.60433 0.125 0.0834961 2.63542 0.0834961 5.85417C0.0834961 9.78125 3.62516 13 8.98975 17.8646L10.5002 19.2396L12.0106 17.8646C17.3752 13 20.9168 9.78125 20.9168 5.85417C20.9168 2.63542 18.396 0.125 15.1877 0.125Z"
+                        fill="white"
+                      />
+                    </svg>
+                  </div>
+                  <p>Like review</p>
+                </button>
+
+                {% else %}
+                <!-- IF LIKED -->
+                <button
+                  class="flex gap-2"
+                  onclick="likeReview('{{ recent_review._id }}','unlike')"
+                >
+                  <div>
+                    <svg
+                      width="21"
+                      height="20"
+                      viewBox="0 0 21 20"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M10.4167 19.1146L8.90625 17.7396C3.54167 12.875 0 9.65625 0 5.72917C0 2.51042 2.52083 0 5.72917 0C7.54167 0 9.28125 0.84375 10.4167 2.16667C11.5521 0.84375 13.2917 0 15.1042 0C18.3125 0 20.8333 2.51042 20.8333 5.72917C20.8333 9.65625 17.2917 12.875 11.9271 17.7396L10.4167 19.1146Z"
+                        fill="white"
+                      />
+                    </svg>
+                  </div>
+                  <p>Liked</p>
+                </button>
+                {% endif %}
+                <p class="text-txtPurple">
+                  {{ recent_review['like_count'] }} Likes
+                </p>
+              </div>
+            </div>
+          </div>
+          {% endfor %} {% else %}
+          <div class="">
+            <h1 class="font-semibold">No reviews</h1>
+          </div>
+          {% endif %}
+          <!-- END FOR LOOP HERE-->
+        </div>
+      </div>
+
+      <!-- Total ratings -->
+      <aside class="w-auto">
+        <div class="sticky top-24">
+          <h1 class="uppercase text-txtPurple text-lg font-bold">
+            RATINGS ({{total_items}})
+          </h1>
+          <p class="text-lg">{{avg_stars}} of 5</p>
+
+          <!-- Star ratings-->
+          <div class="flex flex-col gap-3 py-4">
+            <!-- 5 stars -->
+            <div class="flex flex-row gap-3">
+              <svg
+                width="145"
+                height="25"
+                viewBox="0 0 145 25"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4.78125 25L6.8125 15.7566L0 9.53947L9 8.7171L12.5 0L16 8.7171L25 9.53947L18.1875 15.7566L20.2188 25L12.5 20.0987L4.78125 25Z"
+                  fill="white"
+                />
+                <path
+                  d="M34.7812 25L36.8125 15.7566L30 9.53947L39 8.7171L42.5 0L46 8.7171L55 9.53947L48.1875 15.7566L50.2188 25L42.5 20.0987L34.7812 25Z"
+                  fill="white"
+                />
+                <path
+                  d="M64.7812 25L66.8125 15.7566L60 9.53947L69 8.7171L72.5 0L76 8.7171L85 9.53947L78.1875 15.7566L80.2188 25L72.5 20.0987L64.7812 25Z"
+                  fill="white"
+                />
+                <path
+                  d="M94.7812 25L96.8125 15.7566L90 9.53947L99 8.7171L102.5 0L106 8.7171L115 9.53947L108.188 15.7566L110.219 25L102.5 20.0987L94.7812 25Z"
+                  fill="white"
+                />
+                <path
+                  d="M124.781 25L126.812 15.7566L120 9.53947L129 8.7171L132.5 0L136 8.7171L145 9.53947L138.188 15.7566L140.219 25L132.5 20.0987L124.781 25Z"
+                  fill="white"
+                />
+              </svg>
+              <p>
+                {{star_counts[5]}} {% if star_counts[5] == 1 %} review {% else
+                %} reviews {%endif%}
+              </p>
+            </div>
+
+            <!-- 4 stars -->
+            <div class="flex flex-row gap-3">
+              <svg
+                width="145"
+                height="25"
+                viewBox="0 0 145 25"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4.78125 25L6.8125 15.7566L0 9.53947L9 8.7171L12.5 0L16 8.7171L25 9.53947L18.1875 15.7566L20.2188 25L12.5 20.0987L4.78125 25Z"
+                  fill="white"
+                />
+                <path
+                  d="M34.7812 25L36.8125 15.7566L30 9.53947L39 8.7171L42.5 0L46 8.7171L55 9.53947L48.1875 15.7566L50.2188 25L42.5 20.0987L34.7812 25Z"
+                  fill="white"
+                />
+                <path
+                  d="M64.7812 25L66.8125 15.7566L60 9.53947L69 8.7171L72.5 0L76 8.7171L85 9.53947L78.1875 15.7566L80.2188 25L72.5 20.0987L64.7812 25Z"
+                  fill="white"
+                />
+                <path
+                  d="M94.7812 25L96.8125 15.7566L90 9.53947L99 8.7171L102.5 0L106 8.7171L115 9.53947L108.188 15.7566L110.219 25L102.5 20.0987L94.7812 25Z"
+                  fill="white"
+                />
+                <g clip-path="url(#clip0_292_82)">
+                  <path
+                    d="M127.291 21.349L132.501 18.0426L137.711 21.3925L136.346 15.1277L140.936 10.9512L134.899 10.3856L132.501 4.46888L130.103 10.3421L124.065 10.9077L128.655 15.1277L127.291 21.349ZM124.768 25L126.819 15.7542L120 9.53815L128.983 8.72024L132.501 0L136.019 8.7185L145 9.5364L138.181 15.7525L140.233 24.9983L132.501 20.0908L124.768 25Z"
+                    fill="white"
+                  />
+                </g>
+                <defs>
+                  <clipPath id="clip0_292_82">
+                    <rect
+                      width="25"
+                      height="25"
+                      fill="white"
+                      transform="translate(120)"
+                    />
+                  </clipPath>
+                </defs>
+              </svg>
+              <p>
+                {{star_counts[4]}} {% if star_counts[4] == 1 %} review {% else
+                %} reviews {%endif%}
+              </p>
+            </div>
+
+            <!-- 3 stars -->
+            <div class="flex flex-row gap-3">
+              <svg
+                width="145"
+                height="25"
+                viewBox="0 0 145 25"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4.78125 25L6.8125 15.7566L0 9.53947L9 8.7171L12.5 0L16 8.7171L25 9.53947L18.1875 15.7566L20.2188 25L12.5 20.0987L4.78125 25Z"
+                  fill="white"
+                />
+                <path
+                  d="M34.7812 25L36.8125 15.7566L30 9.53947L39 8.7171L42.5 0L46 8.7171L55 9.53947L48.1875 15.7566L50.2188 25L42.5 20.0987L34.7812 25Z"
+                  fill="white"
+                />
+                <path
+                  d="M64.7812 25L66.8125 15.7566L60 9.53947L69 8.7171L72.5 0L76 8.7171L85 9.53947L78.1875 15.7566L80.2188 25L72.5 20.0987L64.7812 25Z"
+                  fill="white"
+                />
+                <g clip-path="url(#clip0_292_92)">
+                  <path
+                    d="M97.2908 21.349L102.501 18.0426L107.711 21.3925L106.346 15.1277L110.936 10.9512L104.899 10.3856L102.501 4.46888L100.103 10.3421L94.0655 10.9077L98.6553 15.1277L97.2908 21.349ZM94.7684 25L96.8194 15.7542L90 9.53815L98.9828 8.72024L102.501 0L106.019 8.7185L115 9.5364L108.181 15.7525L110.233 24.9983L102.501 20.0908L94.7684 25Z"
+                    fill="white"
+                  />
+                </g>
+                <g clip-path="url(#clip1_292_92)">
+                  <path
+                    d="M127.291 21.349L132.501 18.0426L137.711 21.3925L136.346 15.1277L140.936 10.9512L134.899 10.3856L132.501 4.46888L130.103 10.3421L124.065 10.9077L128.655 15.1277L127.291 21.349ZM124.768 25L126.819 15.7542L120 9.53815L128.983 8.72024L132.501 0L136.019 8.7185L145 9.5364L138.181 15.7525L140.233 24.9983L132.501 20.0908L124.768 25Z"
+                    fill="white"
+                  />
+                </g>
+                <defs>
+                  <clipPath id="clip0_292_92">
+                    <rect
+                      width="25"
+                      height="25"
+                      fill="white"
+                      transform="translate(90)"
+                    />
+                  </clipPath>
+                  <clipPath id="clip1_292_92">
+                    <rect
+                      width="25"
+                      height="25"
+                      fill="white"
+                      transform="translate(120)"
+                    />
+                  </clipPath>
+                </defs>
+              </svg>
+              <p>
+                {{star_counts[3]}} {% if star_counts[3] == 1 %} review {% else
+                %} reviews {%endif%}
+              </p>
+            </div>
+
+            <!-- 2 stars -->
+            <div class="flex flex-row gap-3">
+              <svg
+                width="145"
+                height="25"
+                viewBox="0 0 145 25"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4.78125 25L6.8125 15.7566L0 9.53947L9 8.7171L12.5 0L16 8.7171L25 9.53947L18.1875 15.7566L20.2188 25L12.5 20.0987L4.78125 25Z"
+                  fill="white"
+                />
+                <path
+                  d="M34.7812 25L36.8125 15.7566L30 9.53947L39 8.7171L42.5 0L46 8.7171L55 9.53947L48.1875 15.7566L50.2188 25L42.5 20.0987L34.7812 25Z"
+                  fill="white"
+                />
+                <g clip-path="url(#clip0_292_101)">
+                  <path
+                    d="M67.2908 21.349L72.5008 18.0426L77.7109 21.3925L76.3463 15.1277L80.9362 10.9512L74.8991 10.3856L72.5008 4.46888L70.1025 10.3421L64.0655 10.9077L68.6553 15.1277L67.2908 21.349ZM64.7684 25L66.8194 15.7542L60 9.53815L68.9828 8.72024L72.5008 0L76.0189 8.7185L85 9.5364L78.1806 15.7525L80.2332 24.9983L72.5008 20.0908L64.7684 25Z"
+                    fill="white"
+                  />
+                </g>
+                <g clip-path="url(#clip1_292_101)">
+                  <path
+                    d="M97.2908 21.349L102.501 18.0426L107.711 21.3925L106.346 15.1277L110.936 10.9512L104.899 10.3856L102.501 4.46888L100.103 10.3421L94.0655 10.9077L98.6553 15.1277L97.2908 21.349ZM94.7684 25L96.8194 15.7542L90 9.53815L98.9828 8.72024L102.501 0L106.019 8.7185L115 9.5364L108.181 15.7525L110.233 24.9983L102.501 20.0908L94.7684 25Z"
+                    fill="white"
+                  />
+                </g>
+                <g clip-path="url(#clip2_292_101)">
+                  <path
+                    d="M127.291 21.349L132.501 18.0426L137.711 21.3925L136.346 15.1277L140.936 10.9512L134.899 10.3856L132.501 4.46888L130.103 10.3421L124.065 10.9077L128.655 15.1277L127.291 21.349ZM124.768 25L126.819 15.7542L120 9.53815L128.983 8.72024L132.501 0L136.019 8.7185L145 9.5364L138.181 15.7525L140.233 24.9983L132.501 20.0908L124.768 25Z"
+                    fill="white"
+                  />
+                </g>
+                <defs>
+                  <clipPath id="clip0_292_101">
+                    <rect
+                      width="25"
+                      height="25"
+                      fill="white"
+                      transform="translate(60)"
+                    />
+                  </clipPath>
+                  <clipPath id="clip1_292_101">
+                    <rect
+                      width="25"
+                      height="25"
+                      fill="white"
+                      transform="translate(90)"
+                    />
+                  </clipPath>
+                  <clipPath id="clip2_292_101">
+                    <rect
+                      width="25"
+                      height="25"
+                      fill="white"
+                      transform="translate(120)"
+                    />
+                  </clipPath>
+                </defs>
+              </svg>
+              <p>
+                {{star_counts[2]}} {% if star_counts[2] == 1 %} review {% else
+                %} reviews {%endif%}
+              </p>
+            </div>
+
+            <!-- 1 star -->
+            <div class="flex flex-row gap-3">
+              <svg
+                width="145"
+                height="25"
+                viewBox="0 0 145 25"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M4.78125 25L6.8125 15.7566L0 9.53947L9 8.7171L12.5 0L16 8.7171L25 9.53947L18.1875 15.7566L20.2188 25L12.5 20.0987L4.78125 25Z"
+                  fill="white"
+                />
+                <g clip-path="url(#clip0_292_111)">
+                  <path
+                    d="M37.2908 21.349L42.5008 18.0426L47.7109 21.3925L46.3463 15.1277L50.9362 10.9512L44.8991 10.3856L42.5008 4.46888L40.1025 10.3421L34.0655 10.9077L38.6553 15.1277L37.2908 21.349ZM34.7684 25L36.8194 15.7542L30 9.53815L38.9828 8.72024L42.5008 0L46.0189 8.7185L55 9.5364L48.1806 15.7525L50.2332 24.9983L42.5008 20.0908L34.7684 25Z"
+                    fill="white"
+                  />
+                </g>
+                <g clip-path="url(#clip1_292_111)">
+                  <path
+                    d="M67.2908 21.349L72.5008 18.0426L77.7109 21.3925L76.3463 15.1277L80.9362 10.9512L74.8991 10.3856L72.5008 4.46888L70.1025 10.3421L64.0655 10.9077L68.6553 15.1277L67.2908 21.349ZM64.7684 25L66.8194 15.7542L60 9.53815L68.9828 8.72024L72.5008 0L76.0189 8.7185L85 9.5364L78.1806 15.7525L80.2332 24.9983L72.5008 20.0908L64.7684 25Z"
+                    fill="white"
+                  />
+                </g>
+                <g clip-path="url(#clip2_292_111)">
+                  <path
+                    d="M97.2908 21.349L102.501 18.0426L107.711 21.3925L106.346 15.1277L110.936 10.9512L104.899 10.3856L102.501 4.46888L100.103 10.3421L94.0655 10.9077L98.6553 15.1277L97.2908 21.349ZM94.7684 25L96.8194 15.7542L90 9.53815L98.9828 8.72024L102.501 0L106.019 8.7185L115 9.5364L108.181 15.7525L110.233 24.9983L102.501 20.0908L94.7684 25Z"
+                    fill="white"
+                  />
+                </g>
+                <g clip-path="url(#clip3_292_111)">
+                  <path
+                    d="M127.291 21.349L132.501 18.0426L137.711 21.3925L136.346 15.1277L140.936 10.9512L134.899 10.3856L132.501 4.46888L130.103 10.3421L124.065 10.9077L128.655 15.1277L127.291 21.349ZM124.768 25L126.819 15.7542L120 9.53815L128.983 8.72024L132.501 0L136.019 8.7185L145 9.5364L138.181 15.7525L140.233 24.9983L132.501 20.0908L124.768 25Z"
+                    fill="white"
+                  />
+                </g>
+                <defs>
+                  <clipPath id="clip0_292_111">
+                    <rect
+                      width="25"
+                      height="25"
+                      fill="white"
+                      transform="translate(30)"
+                    />
+                  </clipPath>
+                  <clipPath id="clip1_292_111">
+                    <rect
+                      width="25"
+                      height="25"
+                      fill="white"
+                      transform="translate(60)"
+                    />
+                  </clipPath>
+                  <clipPath id="clip2_292_111">
+                    <rect
+                      width="25"
+                      height="25"
+                      fill="white"
+                      transform="translate(90)"
+                    />
+                  </clipPath>
+                  <clipPath id="clip3_292_111">
+                    <rect
+                      width="25"
+                      height="25"
+                      fill="white"
+                      transform="translate(120)"
+                    />
+                  </clipPath>
+                </defs>
+              </svg>
+              <p>
+                {{star_counts[1]}} {% if star_counts[1] == 1 %} review {% else
+                %} reviews {%endif%}
+              </p>
+            </div>
+          </div>
+
+          <button
+            data-modal-target="add-review-modal"
+            data-modal-toggle="add-review-modal"
+            class="uppercase font-bold text-bgPurple rounded-md bg-white w-full py-2 mt-4 shadow-sm hover:bg-gray-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+          >
+            Add review
+          </button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- OVERLAY -->
+  <div id="overlay" class="hidden fixed inset-0 bg-txtPurple/30"></div>
+  <!-- ADD REVIEW MODEL -->
+  <div
+    id="add-review-modal"
+    tabindex="-1"
+    aria-hidden="true"
+    class="hidden overflow-y-auto overflow-x-hidden fixed inset-0 z-50 flex items-center justify-center w-full h-full"
+  >
+    <div class="relative p-4 w-full max-w-md max-h-full">
+      <!-- Modal content -->
+      <div class="relative rounded-lg shadow bg-bgPurple">
+        <!-- Modal header -->
+        <div
+          class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600"
+        >
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+            Add Review
+          </h3>
+          <button
+            type="button"
+            class="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+            data-modal-hide="add-review-modal"
+          >
+            <svg
+              class="w-3 h-3"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 14 14"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+              />
+            </svg>
+            <span class="sr-only">Close modal</span>
+          </button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="p-6 md:p-5">
+          <h1 class="uppercase text-2xl font-bold">
+            {{movie.title}}
+            <span class="font-normal text-base text-txtPurple">
+              {{movie.release_year}}</span
+            >
+          </h1>
+
+          <!-- Form start -->
+          <form
+            id="review-form"
+            class="space-y-4"
+            action="/add-review/{{movie.show_id}}"
+            method="post"
+            enctype="multipart/form-data"
+          >
+            <!-- To redirect them back to the original page -->
+            <input
+              type="hidden"
+              name="referrer"
+              value="{{ url_for('shows_reviews', showId=movie.show_id) }}"
+            />
+            <!-- Inputs -->
+            <div class="pb-2">
+              <textarea
+                name="review"
+                id="review"
+                class="bg-txtPurple/15 text-white text-sm rounded-xl block w-full p-2.5 mt-4 h-36 focus:outline-none border-none"
+                placeholder="Write your review..."
+                required
+              ></textarea>
+            </div>
+            <div>
+              <label for="rating-label" class="text-white">Rating</label>
+
+              <!-- Stars container-->
+              <div class="h-auto">
+                <span onclick="gfg(1)" class="star">★ </span>
+                <span onclick="gfg(2)" class="star">★ </span>
+                <span onclick="gfg(3)" class="star">★ </span>
+                <span onclick="gfg(4)" class="star">★ </span>
+                <span onclick="gfg(5)" class="star">★ </span>
+                <h3 id="output">Rating is: 0/5</h3>
+                <input
+                  type="hidden"
+                  id="rating-input"
+                  name="ratings"
+                  value="0"
+                />
+              </div>
+            </div>
+            <button
+              type="submit"
+              class="w-full py-2 bg-white text-bgPurple uppercase font-bold rounded-md"
+            >
+              Submit
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function toggleSection(buttonClicked) {
+    var overviewSection = document.getElementById("overviewSection");
+    var reviewsSection = document.getElementById("reviewsSection");
+    var overviewBtn = document.getElementById("overviewBtn");
+    var reviewsBtn = document.getElementById("reviewsBtn");
+
+    // Check which button was clicked
+    if (buttonClicked.id === "overviewBtn") {
+      // If Overview button was clicked, show Overview section and hide Reviews section
+      overviewSection.style.display = "block";
+      reviewsSection.style.display = "none";
+      overviewBtn.style.borderBottom = "4px solid white";
+      reviewsBtn.style.borderBottom = "4px solid transparent";
+    } else if (buttonClicked.id === "reviewsBtn") {
+      // If Reviews button was clicked, show Reviews section and hide Overview section
+      reviewsSection.style.display = "block";
+      overviewSection.style.display = "none";
+      overviewBtn.style.borderBottom = "4px solid transparent";
+      reviewsBtn.style.borderBottom = "4px solid white";
+    }
+  }
+
+  // Toggle modal visibility
+  document.addEventListener("DOMContentLoaded", function () {
+    // Existing event listeners
+
+    document.querySelectorAll("[data-modal-toggle]").forEach(function (toggle) {
+      toggle.addEventListener("click", function () {
+        const modalId = toggle.getAttribute("data-modal-target");
+        const modal = document.getElementById(modalId);
+        const overlay = document.getElementById("overlay");
+
+        // Toggle modal visibility
+        modal.classList.toggle("hidden");
+
+        // Show or hide the overlay based on the modal state
+        if (!modal.classList.contains("hidden")) {
+          overlay.classList.remove("hidden");
+        } else {
+          overlay.classList.add("hidden");
+        }
+      });
+    });
+
+    document
+      .querySelectorAll("[data-modal-hide]")
+      .forEach(function (hideButton) {
+        hideButton.addEventListener("click", function () {
+          const modal = hideButton.closest(".fixed");
+          const overlay = document.getElementById("overlay");
+
+          // Hide modal and overlay
+          modal.classList.add("hidden");
+          overlay.classList.add("hidden");
+        });
+      });
+  });
+
+  let stars = document.getElementsByClassName("star");
+  let output = document.getElementById("output");
+  let ratingInput = document.getElementById("rating-input");
+
+  function gfg(n) {
+    ratingInput.value = n;
+    console.log("Rating Input Value:", ratingInput.value);
+
+    remove();
+    // Update star classes based on rating
+    for (let i = 0; i < n; i++) {
+      let cls = "";
+      if (n == 1) cls = "one";
+      else if (n == 2) cls = "two";
+      else if (n == 3) cls = "three";
+      else if (n == 4) cls = "four";
+      else if (n == 5) cls = "five";
+
+      stars[i].className = "star " + cls;
+    }
+
+    output.innerText = "Rating is: " + n + "/5";
+  }
+
+  // To remove the pre-applied styling
+  function remove() {
+    let i = 0;
+    while (i < 5) {
+      stars[i].className = "star";
+      i++;
+    }
+  }
+
+  function likeReview(reviewId, status) {
+    console.log("Review ID:", reviewId);
+    fetch("/like-review", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ reviewId: reviewId }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          // alert('Review liked!');
+          window.location.reload(); // Reload the page
+        } else {
+          alert("Failed to like review.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("Failed to like review.");
+      });
+  }
+</script>
+{%endblock%}

@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}
+User Forums
+{% endblock %}
+
+{% block content %}
+<div class="min-h-lvh mx-auto">
+    <div class="flex flex-col p-24">
+        <ul class="rounded-lg shadow w-full text-white">
+            {% for post in posts %}
+            <li class="relative border-b border-gray-200" data-post-id="{{ post._id }}">
+                <!-- Three dots dropdown button -->
+                <button id="dropdownButton-{{ post._id }}" class="absolute top-4 right-4 text-gray-500 hover:text-white focus:outline-none">
+                    <i class="fas fa-ellipsis-v"></i>
+                    <span class="sr-only">Open menu</span>
+                </button>
+
+                <!-- Dropdown menu -->
+                <div id="dropdownMenu-{{ post._id }}" class="hidden absolute top-12 right-4 z-10 w-44 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700">
+                    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownButton-{{ post._id }}">
+                        <li>
+                            <a href="/edit-post/{{ user.username }}/{{ post._id }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                <i class="fas fa-pencil-alt mr-2"></i>Edit Post
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <a href="/forum-details/{{ user.username }}/{{ post._id }}" class="block">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center">
+                            <div>
+                                <span class="font-semibold text-base">{{ post.author }}</span>
+                                <p class="font-semibold text-xl mt-2">{{ post.topic_name }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-4 line-clamp-3">
+                        {{ post.content }}
+                    </p>
+                    <div class="flex items-center mt-4 mb-4">
+                        <i class="fas fa-comment-dots text-gray-500"></i>
+                        <span class="ml-2 text-gray-500">{{ post.replies|length }} replies</span>
+                    </div>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get all dropdown buttons
+        const dropdownButtons = document.querySelectorAll('[id^="dropdownButton-"]');
+
+        dropdownButtons.forEach(button => {
+            const postId = button.id.split('-')[1];
+            const dropdownMenu = document.getElementById(`dropdownMenu-${postId}`);
+
+            button.addEventListener('click', function(event) {
+                event.stopPropagation();
+                dropdownMenu.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', function(event) {
+                if (!dropdownMenu.contains(event.target) && !button.contains(event.target)) {
+                    dropdownMenu.classList.add('hidden');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,135 @@
+{% extends "base.html" %} {% block title %}Watch History{% endblock %} {% block
+extra_head %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/watchlist.css') }}"
+/>
+
+{% endblock %} {% block content %}
+<div class="relative bg-center bg-cover h-lvh">
+  <div class="relative flex flex-col h-lvh justify-start pt-40">
+    <div class="flex flex-row h-16 gap-10 px-16">
+      <!-- EMPTY -->
+      <div class="w-1/6"></div>
+
+      <!-- Right section for watchlist -->
+      <div class="text-3xl font-bold">Watch History</div>
+    </div>
+
+    <div class="flex flex-row gap-10 h-full px-16">
+      <!-- Left section for watchlist header and filter options -->
+      <div class="w-1/6 border-r pr-8">
+        {% for genre in genres %}
+        <button
+          id="genre-button"
+          class="filter-button bg-transparent text-left hover:bg-gray-100 text-white hover:text-black hover:border-transparent hover:border-black px-4 py-2 rounded-md w-full"
+        >
+          {{genre}}
+        </button>
+        {% endfor %}
+
+        <!-- Clear filter button -->
+        <button
+          id="clear-filters-button"
+          class="bg-transparent border border-red-500 text-red-500 hover:text-white hover:bg-red-500 hover:border-transparent px-4 py-2 mt-4 rounded-md w-full"
+        >
+          Clear Filters
+        </button>
+      </div>
+
+      <!-- Right section for watchlist -->
+      <div class="grid grid-cols-4 gap-4 h-fit">
+        {% for poster in posters %}
+        <form action="/remove-from-watchhistory" method="POST">
+          <a href="/details/{{poster[2]}}">
+            <div
+              class="relative w-72 h-44 rounded-xl bg-slate-400"
+              id="item"
+              data-genre="{{ poster[1] }}"
+              style="background-image: url('{{ poster[0] }}'); background-size: cover;"
+            >
+              <input type="hidden" name="show_id" value="{{ poster[2] }}" />
+
+              <!-- Cross button to remove from watch history-->
+              <button
+                type="submit"
+                class="absolute top-2 right-3 text-red-700 font-bold"
+              >
+                X
+              </button>
+
+              <a href="/details/{{ poster[2] }}">
+                <img
+                  src="{{ poster[0] }}"
+                  alt="{{ poster[3] }}"
+                  class="w-full h-full object-cover rounded-xl"
+                />
+              </a>
+            </div>
+          </a>
+        </form>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // FEEL FREE TO CHANGE HOW YOU WANT TO DISPLAY YOUR GRIDS
+  document.addEventListener("DOMContentLoaded", function () {
+    const filterButtons = document.querySelectorAll(".filter-button");
+    const gridItems = document.querySelectorAll("#item");
+    let selectedGenres = []; // Array to store selected genre names
+
+    function toggleGridItems() {
+      gridItems.forEach((item) => {
+        const itemGenres = item.getAttribute("data-genre").split(", ");
+        if (
+          selectedGenres.length === 0 ||
+          selectedGenres.some((genre) => itemGenres.includes(genre))
+        ) {
+          item.style.display = "block"; // Show item if it matches selected genres
+        } else {
+          item.style.display = "none"; // Hide item if it doesn't match selected genres
+        }
+      });
+    }
+
+    // Function to toggle selected state of filter buttons and log selected genres
+    function toggleSelectedState() {
+      const genreName = this.innerText; // Get genre name
+      if (!selectedGenres.includes(genreName)) {
+        selectedGenres.push(genreName); // Add genre name to selected genres if not already present
+        this.classList.add("selected"); // Add selected state to the button
+      } else {
+        const index = selectedGenres.indexOf(genreName);
+        selectedGenres.splice(index, 1); // Remove genre name from selected genres if already present
+        this.classList.remove("selected"); // Remove selected state from the button
+      }
+      console.log("Selected Genres:", selectedGenres); // Console log the selected genre names
+    }
+
+    // Event listener for filter buttons
+    filterButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        toggleSelectedState.call(this);
+        toggleGridItems();
+      });
+    });
+
+    // Event listener for Clear Filters button
+    const clearFiltersButton = document.getElementById("clear-filters-button");
+    clearFiltersButton.addEventListener("click", function () {
+      selectedGenres = []; // Reset selected genres array
+      filterButtons.forEach((button) => {
+        button.classList.remove("selected"); // Remove selected state from all buttons
+      });
+      toggleGridItems(); // Reset grid to show all items
+      console.log("Selected Genres:", selectedGenres); // Console log the cleared selected genre names
+    });
+
+    // Initialize grid items visibility
+    toggleGridItems();
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,419 @@
+{% extends "base.html" %}
+{% block title %}Homepage{% endblock %}
+{% block content %}
+<body class="bg-bgPurple">
+  <script>
+    function scrollCarouselLeft(button) {
+      const carousel = button.parentElement.querySelector(".carousel");
+      carousel.scrollBy({
+        left: -300,
+        behavior: "smooth",
+      });
+    }
+  
+    function scrollRight(button) {
+      const carousel = button.parentElement.querySelector(".carousel");
+      carousel.scrollBy({
+        left: 300,
+        behavior: "smooth",
+      });
+    }
+  </script>
+  
+  <!-- HERO COMPONENT -->
+  <div
+    class="relative bg-center bg-cover h-lvh"
+    style="background-image: url('{{herosmovie[0].image_url}}');"
+  >
+    <div class="absolute inset-0 bg-black opacity-50"></div>
+    <div class="relative px-16 flex flex-col h-full justify-center">
+      <div class="">
+        <!-- movie details -->
+        <h1 class="font-extrabold text-6xl text-white">
+          {{ herosmovie[0].title }}
+        </h1>
+        <p class="pt-6 text-neutral-400">
+          {{ herosmovie[0].release_year }} ‧ {{ herosmovie[0].runtime // 60 }}H {{ herosmovie[0].runtime % 60 }}Min
+        </p>
+
+        <p class="pt-6 text-white w-1/3">{{ herosmovie[0].description }}</p>
+      </div>
+
+      <!-- Buttons -->
+      <!-- Add to watchlist btn-->
+      <div class="pt-8 flex flex-row space-x-6">
+        <form action="/add-to-watchlist" method="POST">
+          <input
+            type="hidden"
+            name="show_id"
+            value="{{ herosmovie[0].show_id }}"
+          />
+          <button
+            type="submit"
+            class="inline-flex items-center gap-x-4 rounded-md bg-white px-6 py-2 shadow-sm hover:bg-gray-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+          >
+            <span class="">
+              <svg
+                width="22"
+                height="21"
+                viewBox="0 0 22 21"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M9.288 20.376V0.0239983H12.312V20.376H9.288ZM0.36 11.64V8.808H21.24V11.64H0.36Z"
+                  fill="black"
+                />
+              </svg>
+            </span>
+            <span class="text-black font-semibold text-lg">Watchlist</span>
+          </button>
+        </form>
+
+        <!-- Add to watch history btn-->
+        <form action="/add-to-watchhistory" method="POST">
+          <input
+            type="hidden"
+            name="show_id"
+            value="{{ herosmovie[0].show_id }}"
+          />
+          <button
+            type="submit"
+            class="inline-flex items-center gap-x-4 rounded-md bg-black bg-opacity-60 px-6 py-2 shadow-sm hover:bg-gray-400 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+          >
+            <span class="">
+              <svg
+                width="25"
+                height="25"
+                viewBox="0 0 30 30"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M26.25 8.75L11.25 23.75L4.375 16.875L6.1375 15.1125L11.25 20.2125L24.4875 6.9875L26.25 8.75Z"
+                  fill="white"
+                />
+              </svg>
+            </span>
+            <span class="text-white font-medium text-lg">Watched</span>
+          </button>
+        </form>
+
+        <!-- Ratings button -->
+        <!-- Like btn -->
+        <div class="flex gap-3">
+          <form action="/add-rating" method="POST">
+            {% if watch_history.like_dislike == True %}
+            <button
+              type="submit"
+              class="inline-flex items-center gap-x-4 rounded-full bg-white backdrop-filter backdrop-blur shadow-sm hover:bg-gray-400 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 relative w-11 h-11"
+            >
+              <input
+                type="hidden"
+                name="show_id"
+                value="{{ herosmovie[0].show_id }}"
+              />
+              <input type="hidden" name="rating" value="like" />
+              <div class="flex items-center justify-center w-full h-full">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 18 18"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g clip-path="url(#clip0_262_11)">
+                    <path
+                      d="M8.8 0H9.6V2.4L12 8V14.4C12 14.8243 11.8314 15.2313 11.5314 15.5314C11.2313 15.8314 10.8243 16 10.4 16H4C3.12 16 2.152 15.328 1.84 14.496L0 9.6V8C0 7.57565 0.168571 7.16869 0.468629 6.86863C0.768687 6.56857 1.17565 6.4 1.6 6.4H7.2V1.6C7.2 1.17565 7.36857 0.768687 7.66863 0.468629C7.96869 0.168571 8.37565 0 8.8 0ZM13.6 8H16V16H13.6V8Z"
+                      fill="black"
+                    />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_262_11">
+                      <rect width="18" height="18" fill="black" />
+                    </clipPath>
+                  </defs>
+                </svg>
+              </div>
+            </button>
+            {%else%}
+
+            <button
+              type="submit"
+              class="inline-flex items-center gap-x-4 rounded-full bg-black bg-opacity-60 backdrop-filter backdrop-blur shadow-sm hover:bg-gray-400 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 relative w-11 h-11"
+            >
+              <input
+                type="hidden"
+                name="show_id"
+                value="{{ herosmovie[0].show_id }}"
+              />
+              <input type="hidden" name="rating" value="like" />
+              <div class="flex items-center justify-center w-full h-full">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 18 18"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g clip-path="url(#clip0_262_11)">
+                    <path
+                      d="M8.8 0H9.6V2.4L12 8V14.4C12 14.8243 11.8314 15.2313 11.5314 15.5314C11.2313 15.8314 10.8243 16 10.4 16H4C3.12 16 2.152 15.328 1.84 14.496L0 9.6V8C0 7.57565 0.168571 7.16869 0.468629 6.86863C0.768687 6.56857 1.17565 6.4 1.6 6.4H7.2V1.6C7.2 1.17565 7.36857 0.768687 7.66863 0.468629C7.96869 0.168571 8.37565 0 8.8 0ZM13.6 8H16V16H13.6V8Z"
+                      fill="white"
+                    />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_262_11">
+                      <rect width="18" height="18" fill="white" />
+                    </clipPath>
+                  </defs>
+                </svg>
+              </div>
+            </button>
+            {% endif %}
+          </form>
+
+          <!-- Dislike btn -->
+          <form action="/add-rating" method="POST">
+            {% if watch_history.like_dislike == False %}
+            <button
+              type="submit"
+              class="inline-flex items-center gap-x-4 rounded-full bg-white backdrop-filter backdrop-blur shadow-sm hover:bg-gray-400 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 relative w-11 h-11"
+            >
+              <input
+                type="hidden"
+                name="show_id"
+                value="{{ herosmovie[0].show_id }}"
+              />
+              <input type="hidden" name="rating" value="dislike" />
+              <div class="flex items-center justify-center w-full h-full">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 18 18"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g clip-path="url(#clip0_267_17)">
+                    <path
+                      d="M9.9 18C9.42261 18 8.96477 17.8104 8.62721 17.4728C8.28964 17.1352 8.1 16.6774 8.1 16.2V10.8H1.8C1.32261 10.8 0.864773 10.6104 0.527208 10.2728C0.189642 9.93523 0 9.47739 0 9V7.2L2.07 1.692C2.27633 1.21098 2.6134 0.797444 3.04294 0.498358C3.47248 0.199273 3.97727 0.0266182 4.5 0L11.7 0C12.1774 0 12.6352 0.189642 12.9728 0.527208C13.3104 0.864773 13.5 1.32261 13.5 1.8V9L10.8 15.3V18H9.9ZM15.3 9V0H18V9H15.3Z"
+                      fill="black"
+                    />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_267_17">
+                      <rect width="18" height="18" fill="white" />
+                    </clipPath>
+                  </defs>
+                </svg>
+              </div>
+            </button>
+            {% else %}
+
+            <button
+              type="submit"
+              class="inline-flex items-center gap-x-4 rounded-full bg-black bg-opacity-60 backdrop-filter backdrop-blur shadow-sm hover:bg-gray-400 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 relative w-11 h-11"
+            >
+              <input
+                type="hidden"
+                name="show_id"
+                value="{{ herosmovie[0].show_id }}"
+              />
+              <input type="hidden" name="rating" value="dislike" />
+              <div class="flex items-center justify-center w-full h-full">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 18 18"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g clip-path="url(#clip0_262_7)">
+                    <path
+                      d="M9.9 18C9.42261 18 8.96477 17.8104 8.62721 17.4728C8.28964 17.1352 8.1 16.6774 8.1 16.2V10.8H1.8C1.32261 10.8 0.864773 10.6104 0.527208 10.2728C0.189642 9.93523 0 9.47739 0 9V7.2L2.07 1.692C2.27633 1.21098 2.6134 0.797444 3.04294 0.498358C3.47248 0.199273 3.97727 0.0266182 4.5 0L11.7 0C12.1774 0 12.6352 0.189642 12.9728 0.527208C13.3104 0.864773 13.5 1.32261 13.5 1.8V9L10.8 15.3V18H9.9ZM15.3 9V0H18V9H15.3Z"
+                      fill="white"
+                    />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_262_7">
+                      <rect width="18" height="18" fill="white" />
+                    </clipPath>
+                  </defs>
+                </svg>
+              </div>
+            </button>
+            {% endif %}
+          </form>
+        </div>
+      </div>
+      <div>
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %} {% for category, message in messages %}
+        <div class="alert alert-{{ category }} py-2" style="color: red">
+          {{ message }}
+        </div>
+        {% endfor %} {% endif %} {% endwith %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-bgPurple to-transparent h-12"
+  ></div>
+  <!-- RECOMMENDATIONS / SHOW MOVIES AND SERIES-->
+  <div class="min-h-lvh p-16">
+    <div class="flex flex-col space-y-14 text-white text-2xl font-semibold">
+      {% if has_liked_content %}
+      <section class="carousel-container">
+        <h3>Because you liked {{ liked_genre_name }}</h3>
+        <div class="relative">
+          <section
+            class="carousel flex flex-row space-x-4 pt-4 overflow-hidden"
+          >
+            {% for movie in similar_genre_movies %}
+            <div class="w-80 h-44 rounded-xl bg-slate-400">
+              <a href="/details/{{ movie.show_id }}">
+                <img
+                  src="{{ movie.image_url }}"
+                  alt="{{ movie.title }}"
+                  class="w-full h-full object-cover rounded-xl"
+                />
+              </a>
+            </div>
+            {% endfor %}
+          </section>
+          <button
+            class="carousel-btn left-btn"
+            onclick="scrollCarouselLeft(this)"
+          >
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button class="carousel-btn right-btn" onclick="scrollRight(this)">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </section>
+
+      <section class="carousel-container">
+        <h3>Movies from the countries you enjoy</h3>
+        <div class="relative">
+          <section
+            class="carousel flex flex-row space-x-4 pt-4 overflow-hidden"
+          >
+            {% for movie in similar_country_movies %}
+            <div class="w-80 h-44 rounded-xl bg-slate-400">
+              <a href="/details/{{ movie.show_id }}">
+                <img
+                  src="{{ movie.image_url }}"
+                  alt="{{ movie.title }}"
+                  class="w-full h-full object-cover rounded-xl"
+                />
+              </a>
+            </div>
+            {% endfor %}
+          </section>
+          <button
+            class="carousel-btn left-btn"
+            onclick="scrollCarouselLeft(this)"
+          >
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button class="carousel-btn right-btn" onclick="scrollRight(this)">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </section>
+      {% endif %}
+
+      <section class="carousel-container">
+        <h3>This week's featured movies</h3>
+        <div class="relative">
+          <section
+            class="carousel flex flex-row space-x-4 pt-4 overflow-hidden"
+          >
+            {% for movie in random_movies %}
+            <div class="w-80 h-44 rounded-xl bg-slate-400">
+              <a href="/details/{{ movie.show_id }}">
+                <img
+                  src="{{ movie.image_url }}"
+                  alt="{{ movie.title }}"
+                  class="w-full h-full object-cover rounded-xl"
+                />
+              </a>
+            </div>
+            {% endfor %}
+          </section>
+          <button
+            class="carousel-btn left-btn"
+            onclick="scrollCarouselLeft(this)"
+          >
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button class="carousel-btn right-btn" onclick="scrollRight(this)">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </section>
+
+      <section class="carousel-container">
+        <h3>TV Shows for you to binge</h3>
+        <div class="relative">
+          <section
+            class="carousel flex flex-row space-x-4 pt-4 overflow-hidden"
+          >
+            {% for movie in random_tvshows %}
+            <div class="w-80 h-44 rounded-xl bg-slate-400">
+              <a href="/details/{{ movie.show_id }}">
+                <img
+                  src="{{ movie.image_url }}"
+                  alt="{{ movie.title }}"
+                  class="w-full h-full object-cover rounded-xl"
+                />
+              </a>
+            </div>
+            {% endfor %}
+          </section>
+          <button
+            class="carousel-btn left-btn"
+            onclick="scrollCarouselLeft(this)"
+          >
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button class="carousel-btn right-btn" onclick="scrollRight(this)">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </section>
+
+      <section class="carousel-container">
+        <h3>Popular Movies</h3>
+        <div class="relative">
+          <section
+            class="carousel flex flex-row space-x-4 pt-4 overflow-hidden"
+          >
+            {% for movie in most_liked_shows %}
+            <div class="w-80 h-44 rounded-xl bg-slate-400">
+              <a href="/details/{{ movie.show_id }}">
+                <img
+                  src="{{ movie.image_url }}"
+                  alt="{{ movie.title }}"
+                  class="w-full h-full object-cover rounded-xl"
+                />
+              </a>
+            </div>
+            {% endfor %}
+          </section>
+          <button
+            class="carousel-btn left-btn"
+            onclick="scrollCarouselLeft(this)"
+          >
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button class="carousel-btn right-btn" onclick="scrollRight(this)">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </section>
+    </div>
+  </div>
+{% endblock %}

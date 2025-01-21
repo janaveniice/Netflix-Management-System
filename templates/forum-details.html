@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+{% block title %}
+Details
+{% endblock %}
+{% block content %}
+<div class="min-h-lvh mx-auto">
+    <div class="flex flex-col p-24 relative">
+        <div id="content-container" class="relative">
+            <!-- Display flashed messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <div class="mb-4">
+                  {% for category, message in messages %}
+                    <div class="flash {{ category }}">
+                      {{ message }}
+                    </div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endwith %}
+            <div class="text-white px-6 py-4 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center">
+                        <!--<div class="w-10 h-10 rounded-full bg-white mr-4 flex items-center justify-center">
+                            <img class="w-10 h-10 rounded-full" src="path/to/profile-pic.jpg" alt="">
+                        </div>-->
+                        <div>
+                            <span class="font-semibold text-base">{{ post.author }}</span>
+                            <p class="font-semibold text-xl mt-2">{{ post.topic_name }}</p>
+                        </div>
+                    </div>
+                    <span class="text-xs">Created {{ post.created_at }}</span>
+                </div>
+                <p class="mt-4">
+                    {{ post.content }}
+                </p>
+                <div class="flex items-center mt-4">
+                    <i id="toggle-comment-area" class="fas fa-comment-dots text-gray-500 cursor-pointer"></i>
+                    <span class="ml-2 text-gray-500" id="comment-count">{{ post.replies|length }}</span>
+                </div>
+            </div>
+
+            <!-- Comments Section -->
+            <div id="comments-section" class="mt-6 text-white">
+                <!-- Comments will be dynamically inserted here by JavaScript -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Text Area for Comment (Initially hidden) -->
+<div id="comment-area" class="hidden p-4 bg-gray-800 text-white rounded">
+    <form id="comment-form">
+        <p id="comment-area-label" class="text-sm mb-2">Commenting on Topic Name</p>
+        <textarea id="comment-text" class="w-full p-2 bg-gray-700 text-white rounded mb-4" rows="4" placeholder="Type your comment here..." name="content"></textarea>
+        <input type="hidden" id="post-id" name="post_id" value="{{ post._id }}">
+        <input type="hidden" id="parent-reply-id" name="parent_reply_id">
+        <input type="hidden" id="author-id" name="author_id" value="{{ user.username }}">
+        <div class="flex justify-end">
+            <button type="button" id="cancel-btn" class="mr-2 px-4 py-2 bg-[#716D77] text-white rounded">Cancel</button>
+            <button type="submit" id="continue-btn" class="px-4 py-2 bg-[#8C7CA0] text-white rounded">Continue</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const repliesMap = {{ replies_map|tojson|safe }};
+
+        function renderComments(comments, parentElement = document.getElementById('comments-section'), depth = 0) {
+            comments.forEach(comment => {
+                const commentDiv = document.createElement('div');
+                commentDiv.className = 'comment-wrapper mb-6';
+                commentDiv.dataset.commentId = comment._id;
+
+                const indentStyle = `margin-left: ${depth * 30}px;`;
+
+                commentDiv.innerHTML = `
+                    <div class="flex items-start mt-6" style="${indentStyle}">
+                        <div class="flex-1">
+                            <div class="flex items-center">
+                                <span class="font-semibold mr-2">${comment.author_id}</span>
+                                <span class="text-sm">• ${new Date(comment.created_at).toLocaleString()}</span>
+                            </div>
+                            <p class="mt-2">${comment.content}</p>
+                            <div class="flex items-center mt-2 cursor-pointer reply-btn" data-comment-id="${comment._id}" data-comment-author="${comment.author_id}">
+                                <i class="fas fa-reply"></i>
+                                <span class="ml-2">Reply</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                const replySection = document.createElement('div');
+                replySection.className = 'reply-section';
+
+                const nestedComments = repliesMap[comment._id] || [];
+                if (nestedComments.length > 0) {
+                    renderComments(nestedComments, replySection, depth + 1);
+                }
+
+                commentDiv.appendChild(replySection);
+                parentElement.appendChild(commentDiv);
+            });
+        }
+
+        function showReplyArea(commenterName, commentId) {
+            console.log('Replying to comment ID:', commentId);  // Debug log
+            const commentArea = document.getElementById('comment-area');
+            const commentWrapper = document.querySelector(`.comment-wrapper[data-comment-id="${commentId}"]`);
+
+            if (!commentWrapper) {
+                console.error('Comment wrapper not found');
+                return;
+            }
+
+            document.getElementById('comment-area-label').textContent = `Replying to ${commenterName}`;
+            document.getElementById('parent-reply-id').value = commentId;
+
+            // Clear previous comment area from any previous location
+            const previousArea = document.querySelector('#comments-section > #comment-area');
+            if (previousArea) {
+                previousArea.remove();
+            }
+
+            // Append the comment area to the selected comment wrapper
+            commentWrapper.appendChild(commentArea);
+            commentArea.classList.remove('hidden');
+            commentArea.style.marginTop = '20px';
+            document.getElementById('comment-text').focus();
+        }
+
+        function showCommentArea() {
+            const commentArea = document.getElementById('comment-area');
+            const contentContainer = document.getElementById('content-container');
+
+            document.getElementById('comment-area-label').textContent = `Commenting on Topic Name`;
+            document.getElementById('parent-reply-id').value = '';
+
+            contentContainer.insertBefore(commentArea, document.getElementById('comments-section'));
+
+            commentArea.classList.remove('hidden');
+            commentArea.style.marginTop = '20px';
+            document.getElementById('comment-text').focus();
+        }
+
+        document.getElementById('cancel-btn').addEventListener('click', () => {
+            const commentArea = document.getElementById('comment-area');
+            commentArea.classList.add('hidden');
+            document.getElementById('comment-text').value = '';
+        });
+
+        document.getElementById('comment-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            fetch('/submit-comment', {
+                method: 'POST',
+                body: formData,
+            }).then(response => response.json())
+              .then(data => {
+                  if (data.success) {
+                      location.reload();
+                  } else {
+                      alert('Failed to submit comment');
+                  }
+              });
+        });
+
+        document.getElementById('toggle-comment-area').addEventListener('click', () => {
+            showCommentArea();
+        });
+
+        // Event delegation for reply buttons
+        document.getElementById('comments-section').addEventListener('click', (event) => {
+            const replyButton = event.target.closest('.reply-btn');
+            if (replyButton) {
+                const commentId = replyButton.dataset.commentId;
+                const commenterName = replyButton.dataset.commentAuthor;
+                showReplyArea(commenterName, commentId);
+            }
+        });
+
+        const comments = repliesMap['root'] || [];
+        renderComments(comments);
+    });
+</script>
+{% endblock %}

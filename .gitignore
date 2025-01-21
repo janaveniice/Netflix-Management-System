@@ -1,0 +1,12 @@
+node_modules
+venv/
+env/
+package-lock.json
+package.json
+__pycache__/models.cpython-312.pyc
+node_modules/.package-lock.json
+node_modules/.bin/tailwind/
+node_modules/.bin/tailwindcss/
+node_modules/tailwindcss/
+static/css/output.css
+__pycache__

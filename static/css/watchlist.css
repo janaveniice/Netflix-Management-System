@@ -1,0 +1,9 @@
+body {
+    font-family: Montserrat;
+    background-color: #000;
+    color: #fff;
+}
+.selected {
+    background-color: #4a5568; /* Change background color when selected */
+    color: #ffffff; /* Change text color when selected */
+  }

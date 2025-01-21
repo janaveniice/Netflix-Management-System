@@ -1,0 +1,14 @@
+.star {
+  font-size: 4vh;
+  color: white;
+  opacity: 0.3;
+  cursor: pointer;
+}
+
+.one,
+.two,
+.three,
+.four,
+.five {
+  opacity: 1;
+}

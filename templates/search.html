@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Homepage</title>
+    <link
+      href="{{url_for('static',filename='css/output.css')}}"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swiper/swiper-bundle.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/watchlist.css') }}"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  </head>
+  <body class="bg-bgPurple">
+    <header
+      class="fixed w-full bg-gradient-to-b from-black to-transparent z-10"
+    >
+      <nav class="pt-8 px-16 h-24 mx-auto">
+        <div class="flex flex-row justify-between">
+          <div class="flex items-center justify-start">
+            <div class="text-white font-bold text-2xl">
+              <a href="/homepage/{{username}}">DBG4</a>
+            </div>
+            <div class="hidden md:block pl-8 text-xl">
+              <ul class="flex items-center space-x-10">
+                <li class="hover:border-b-2 border-white">
+                  <a href="/homepage/{{username}}" class="text-white">Home</a>
+                </li>
+                <li class="hover:border-b-2 border-white">
+                  <a href="/content/{{username}}" class="text-white">Browse</a>
+                </li>
+                <li class="hover:border-b-2 border-white">
+                  <a href="/watchlist" class="text-white">Watchlist</a>
+                </li>
+                <li class="hover:border-b-2 border-white">
+                  <a href="/watch-history" class="text-white">Watch History</a>
+                </li>
+
+                <li>
+                  <!-- SEARCH BAR -->
+                  <form action="/search" method="get">
+                    <div
+                      class="flex appearance-none border-2 rounded-xl h-10 sm:max-w-screen-sm text-white"
+                    >
+                      <button
+                        class="flex items-center justify-center px-3"
+                        type="submit"
+                      >
+                        <svg
+                          class="w-5 h-5"
+                          fill="white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M16.32 14.9l5.39 5.4a1 1 0 0 1-1.42 1.4l-5.38-5.38a8 8 0 1 1 1.41-1.41zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z"
+                          ></path>
+                        </svg>
+                      </button>
+                      <input
+                        type="text"
+                        name="q"
+                        class="appearance-none bg-transparent py-2 w-64 text-white text-sm placeholder-white focus:outline-none border-none"
+                        autocomplete="off"
+                        style="background-color: transparent"
+                        placeholder="Titles, Casts, Genres"
+                      />
+                    </div>
+                  </form>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="profile pic">
+            <a href="/profile">
+              <div
+                class="bg-cover bg-center w-10 h-10 bg-gray-300 rounded-full mr-8"
+                style="background-image: url('{{user.profile_pic}}');"
+              ></div>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="relative h-lvh px-36">
+      <div class="relative flex flex-col h-lvh justify-start pt-40">
+        <div class="text-3xl font-bold">More like: {{search_query}}</div>
+        <div class="flex flex-row gap-10 h-full py-10">
+          <!-- Show TV & Movies -->
+          <div class="flex flex-wrap flex-col md:flex-row gap-4 h-fit w-full">
+            {% if results %} {% for result in results %}
+            <div class="relative w-72 h-44 rounded-xl bg-slate-400" id="item">
+              <a href="/details/{{result.show_id}}">
+                <img
+                  src="{{ result.image }}"
+                  alt="{{ result.title }}"
+                  class="w-full h-full object-cover rounded-xl"
+                />
+              </a>
+            </div>
+            {% endfor %} {% else %}
+            <p>No matching results</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

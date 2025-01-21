@@ -1,0 +1,500 @@
+{% extends "base.html" %} {% block title %}{{movie.title}}'s Reviews{% endblock
+%} {% block content %} {% block extra_head %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/review-form.css') }}"
+/>
+{% endblock %}
+<!-- Container -->
+<div class="flex flex-row gap-20 h-full pt-40 px-40">
+  <!-- SHOW DETAILS   -->
+  <aside class="w-[240px]">
+    <div class="container sticky top-24">
+      <a href="/details/{{showId}}">
+        <!-- Image -->
+        <div class="w-[240px] h-[360px] rounded-xl bg-slate-400 drop-shadow-lg">
+          <img
+            src="{{movie.image}}"
+            alt=""
+            class="w-full h-full object-cover rounded-xl"
+          />
+        </div>
+  
+        <!-- Title -->
+        <h1 class="uppercase font-bold text-xl pt-4">
+          {{movie.title}}
+          <span class="font-normal text-txtPurple">{{movie.release_year}}</span>
+        </h1>
+      </a href="/details/{{showId}}">
+
+      <!-- Ratings, likes, watched -->
+      <div class="flex items-baseline gap-6 pt-1">
+        <!-- Star rating -->
+        <div class="flex items-baseline gap-1">
+          <span class="text-2xl">★</span>
+          <p class="mt-1">{{avg_stars}}/5</p>
+        </div>
+
+        <!-- Likes -->
+        <div class="flex items-baseline gap-2 mt-1">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 18 18"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9.9 0H10.8V2.7L13.5 9V16.2C13.5 16.6774 13.3104 17.1352 12.9728 17.4728C12.6352 17.8104 12.1774 18 11.7 18H4.5C3.51 18 2.421 17.244 2.07 16.308L0 10.8V9C0 8.52261 0.189642 8.06477 0.527208 7.72721C0.864773 7.38964 1.32261 7.2 1.8 7.2H8.1V1.8C8.1 1.32261 8.28964 0.864773 8.62721 0.527208C8.96477 0.189642 9.42261 0 9.9 0ZM15.3 9H18V18H15.3V9Z"
+              fill="white"
+            />
+          </svg>
+          <p>{{total_likes}}</p>
+        </div>
+
+        <!-- Watched -->
+        <div class="flex items-baseline gap-2">
+          <svg
+            width="18"
+            height="12"
+            viewBox="0 0 18 12"
+            fill="none"
+            class="mt-2"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M9.00021 8.25C10.2429 8.25 11.2502 7.24264 11.2502 6C11.2502 4.75736 10.2429 3.75 9.00021 3.75C7.75757 3.75 6.75021 4.75736 6.75021 6C6.75021 7.24264 7.75757 8.25 9.00021 8.25Z"
+              fill="white"
+            />
+            <path
+              d="M17.2563 5.38828C16.3261 3.94969 15.1192 2.72766 13.7663 1.85402C12.2697 0.886524 10.6174 0.375 8.98826 0.375C7.49342 0.375 6.02353 0.802148 4.61939 1.64449C3.18748 2.50336 1.89021 3.75809 0.763455 5.37352C0.636254 5.55608 0.5662 5.77235 0.562194 5.99482C0.558187 6.2173 0.62041 6.43594 0.740955 6.62297C1.66943 8.07598 2.86439 9.29977 4.19611 10.1614C5.69553 11.1328 7.3092 11.625 8.98826 11.625C10.6304 11.625 12.2863 11.1177 13.7765 10.1583C15.1287 9.28746 16.3331 8.06086 17.2598 6.61031C17.3762 6.42763 17.4377 6.21539 17.4371 5.99878C17.4365 5.78217 17.3737 5.57029 17.2563 5.38828ZM9.00021 9.375C8.3327 9.375 7.68018 9.17706 7.12516 8.80621C6.57015 8.43536 6.13757 7.90826 5.88212 7.29156C5.62667 6.67486 5.55984 5.99626 5.69006 5.34157C5.82029 4.68688 6.14173 4.08552 6.61373 3.61351C7.08573 3.14151 7.6871 2.82008 8.34178 2.68985C8.99647 2.55962 9.67507 2.62646 10.2918 2.88191C10.9085 3.13735 11.4356 3.56993 11.8064 4.12495C12.1773 4.67997 12.3752 5.33249 12.3752 6C12.3742 6.89479 12.0183 7.75264 11.3856 8.38535C10.7529 9.01807 9.895 9.37398 9.00021 9.375Z"
+              fill="white"
+            />
+          </svg>
+          <p class="mt-1">{{total_watched}}</p>
+        </div>
+      </div>
+
+      <button
+        data-modal-target="add-review-modal"
+        data-modal-toggle="add-review-modal"
+        class="uppercase font-bold text-bgPurple rounded-md bg-white w-full py-2 mt-4 shadow-sm hover:bg-gray-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+      >
+        Add review
+      </button>
+      <div>
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %} {% for category, message in messages %}
+        <div class="alert alert-{{ category }} py-2" style="color: red">
+          {{ message }}
+        </div>
+        {% endfor %} {% endif %} {% endwith %}
+      </div>
+    </div>
+  </aside>
+
+  <main class="w-full pb-10">
+    <!-- HEADER -->
+    <div class="flex flew-row justify-between items-center">
+      <h1 class="uppercase p-4 text-txtPurple text-2xl font-bold">REVIEWS</h1>
+
+      <!-- FILTER BUTTONS -->
+      <div class="flex gap-6 w-full justify-end">
+        <!-- Sort by ratings -->
+        <button
+          class="relative group transition-all duration-200 focus:overflow-visible overflow-hidden flex flex-row items-center gap-2 w-auto pl-12"
+        >
+          <span class="text-txtPurple"> Ratings </span>
+          <i class="fas fa-chevron-down text-txtPurple text-sm"></i>
+
+          <div
+            class="absolute shadow-lg -bottom-52 left-0 w-full h-max p-2 bg-txtPurple border border-zinc-200 rounded-lg flex flex-col gap-2"
+          >
+            <span
+              class="flex flex-row gap-2 items-center hover:bg-bgPurple rounded-lg px-2"
+              onclick="window.location='/Allratingby/{{showId}}/1'"
+            >
+              <span class="text-xl">★ </span>
+            </span>
+
+            <span
+              class="flex flex-row gap-1 items-center hover:bg-bgPurple rounded-lg px-2"
+              onclick="window.location='/Allratingby/{{showId}}/2'"
+            >
+              <span class="text-xl">★ </span>
+              <span class="text-xl">★ </span>
+            </span>
+
+            <span
+              class="flex flex-row gap-1 items-center hover:bg-bgPurple rounded-lg px-2"
+              onclick="window.location='/Allratingby/{{showId}}/3'"
+            >
+              <span class="text-xl">★ </span>
+              <span class="text-xl">★ </span>
+              <span class="text-xl">★ </span>
+            </span>
+
+            <span
+              class="flex flex-row gap-1 items-center hover:bg-bgPurple rounded-lg px-2"
+              onclick="window.location='/Allratingby/{{showId}}/4'"
+            >
+              <span class="text-xl">★ </span>
+              <span class="text-xl">★ </span>
+              <span class="text-xl">★ </span>
+              <span class="text-xl">★ </span>
+            </span>
+
+            <span
+              class="flex flex-row gap-1 items-center hover:bg-bgPurple rounded-lg px-2"
+              onclick="window.location='/Allratingby/{{showId}}/5'"
+            >
+              <span class="text-xl">★ </span>
+              <span class="text-xl">★ </span>
+              <span class="text-xl">★ </span>
+              <span class="text-xl">★ </span>
+              <span class="text-xl">★ </span>
+            </span>
+          </div>
+        </button>
+
+        <!-- Sort by date -->
+
+        <button
+          class="relative group transition-all duration-200 focus:overflow-visible overflow-hidden flex flex-row items-center gap-2 w-auto pl-5"
+        >
+          <span class="text-txtPurple"> Sort by Date </span>
+          <i class="fas fa-chevron-down text-txtPurple text-sm"></i>
+
+          <div
+            class="absolute shadow-lg -bottom-32 left-0 w-full h-max p-2 bg-txtPurple border border-zinc-200 rounded-lg flex flex-col gap-2"
+          >
+            <span
+              class="flex flex-row gap-2 items-center hover:bg-bgPurple rounded-lg p-2"
+              onclick="window.location='/Allorderby/{{showId}}/desc'"
+            >
+              <span class="">Newest first </span>
+            </span>
+            <span
+              class="flex flex-row gap-2 items-center hover:bg-bgPurple rounded-lg p-2"
+              onclick="window.location='/Allorderby/{{showId}}/asd'"
+            >
+              <span class="">Oldest first </span>
+            </span>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Each review starts here -->
+    <div class="flex flex-col gap-4 p-4">
+      <!-- START FOR LOOP HERE-->
+      {% if items %}
+      {% for item in items %}
+      <div class="flex flex-row h-auto pb-6 border-b border-txtPurple">
+        <div class="profile pic w-auto">
+          <img
+            src="{{ url_for('static', filename=item['user_image'].replace('static/', '')) }}"
+            alt="user pic"
+            class="w-12 h-12 rounded-full mr-8"
+          />
+        </div>
+
+        <div class="w-full">
+          <h1 class="font-semibold">
+            {{item['user_id']}} &nbsp;&nbsp;&nbsp;
+            <span class="font-normal text-txtPurple"
+              >{{item['created_at'].strftime('%d %B %Y')}}</span
+            >
+          </h1>
+          <p>
+            {% for _ in range(item['stars']) %}
+            <span class="stars">★</span>
+            {% endfor %}
+          </p>
+
+          <p class="pt-4">{{item['review_message']}}</p>
+
+          <!-- Likes -->
+          <div class="flex flex-row gap-5 pt-4 text-sm pb-4">
+            <!-- <p>{{item}}</p> -->
+
+            {% if item['status'] == "noLike" %}
+
+            <button
+              class="flex gap-2"
+              onclick="likeReview('{{ item['_id'] }}', 'like')"
+            >
+              <div>
+                <svg
+                  width="21"
+                  height="20"
+                  viewBox="0 0 21 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M10.6043 16.3229L10.5002 16.4271L10.3856 16.3229C5.43766 11.8333 2.16683 8.86458 2.16683 5.85417C2.16683 3.77083 3.72933 2.20833 5.81266 2.20833C7.41683 2.20833 8.97933 3.25 9.53141 4.66667H11.4689C12.021 3.25 13.5835 2.20833 15.1877 2.20833C17.271 2.20833 18.8335 3.77083 18.8335 5.85417C18.8335 8.86458 15.5627 11.8333 10.6043 16.3229ZM15.1877 0.125C13.3752 0.125 11.6356 0.96875 10.5002 2.29167C9.36475 0.96875 7.62516 0.125 5.81266 0.125C2.60433 0.125 0.0834961 2.63542 0.0834961 5.85417C0.0834961 9.78125 3.62516 13 8.98975 17.8646L10.5002 19.2396L12.0106 17.8646C17.3752 13 20.9168 9.78125 20.9168 5.85417C20.9168 2.63542 18.396 0.125 15.1877 0.125Z"
+                    fill="white"
+                  />
+                </svg>
+              </div>
+              <p>Like review</p>
+            </button>
+
+            {% else %}
+            <!-- IF LIKED -->
+            <button
+              class="flex gap-2"
+              onclick="likeReview('{{ item['_id'] }}', 'like')"
+            >
+              <div>
+                <svg
+                  width="21"
+                  height="20"
+                  viewBox="0 0 21 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M10.4167 19.1146L8.90625 17.7396C3.54167 12.875 0 9.65625 0 5.72917C0 2.51042 2.52083 0 5.72917 0C7.54167 0 9.28125 0.84375 10.4167 2.16667C11.5521 0.84375 13.2917 0 15.1042 0C18.3125 0 20.8333 2.51042 20.8333 5.72917C20.8333 9.65625 17.2917 12.875 11.9271 17.7396L10.4167 19.1146Z"
+                    fill="white"
+                  />
+                </svg>
+              </div>
+              <p>Liked</p>
+            </button>
+
+            {% endif %}
+            <p class="text-txtPurple">{{item['total_likes']}} Likes</p>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      {% else %}
+      <div class="flex flex-row h-auto pb-6 ">
+        <h1 class="font-semibold">No reviews yet</h1>
+      </div>
+      {% endif %}
+      <!-- END FOR LOOP HERE-->
+    </div>
+
+    <!-- Pagination buttons -->
+    <div class="flex flex-row justify-between">
+      <a
+        href="?page={{ page - 1 }}"
+        class="font-semibold text-bgPurple rounded-md bg-txtPurple py-1 px-4 mt-4 hover:bg-gray-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+      >
+        Previous
+      </a>
+
+      <a
+        href="?page={{ page + 1 }}"
+        class="font-semibold text-bgPurple rounded-md bg-txtPurple py-1 px-4 mt-4 hover:bg-gray-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+      >
+        Next
+      </a>
+    </div>
+  </main>
+
+  <!-- OVERLAY -->
+  <div id="overlay" class="hidden fixed inset-0 bg-txtPurple/30"></div>
+  <!-- ADD REVIEW MODEL -->
+  <div
+    id="add-review-modal"
+    tabindex="-1"
+    aria-hidden="true"
+    class="hidden overflow-y-auto overflow-x-hidden fixed inset-0 z-50 flex items-center justify-center w-full h-full"
+  >
+    <div class="relative p-4 w-full max-w-md max-h-full">
+      <!-- Modal content -->
+      <div class="relative rounded-lg shadow bg-bgPurple">
+        <!-- Modal header -->
+        <div
+          class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600"
+        >
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+            Add Review
+          </h3>
+          <button
+            type="button"
+            class="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+            data-modal-hide="add-review-modal"
+          >
+            <svg
+              class="w-3 h-3"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 14 14"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+              />
+            </svg>
+            <span class="sr-only">Close modal</span>
+          </button>
+        </div>
+
+        <!-- Modal body -->
+        <div class="p-6 md:p-5">
+          <h1 class="uppercase text-2xl font-bold">
+            {{movie.title}}
+            <span class="font-normal text-base text-txtPurple">
+              {{movie.release_year}}</span
+            >
+          </h1>
+
+          <!-- Form start -->
+          <form
+            id="review-form"
+            class="space-y-4"
+            action="/add-review/{{movie.show_id}}"
+            method="post"
+            enctype="multipart/form-data"
+          >
+            <!-- To redirect them back to the original page -->
+            <input
+              type="hidden"
+              name="referrer"
+              value="{{ url_for('shows_reviews', showId=movie.show_id) }}"
+            />
+            <!-- Inputs -->
+            <div class="pb-2">
+              <textarea
+                name="review"
+                id="review"
+                class="bg-txtPurple/15 text-white text-sm rounded-xl block w-full p-2.5 mt-4 h-36 focus:outline-none border-none"
+                placeholder="Write your review..."
+                required
+              ></textarea>
+            </div>
+            <div>
+              <label for="rating-label" class="text-white">Rating</label>
+
+              <!-- Stars container-->
+              <div class="h-auto">
+                <span onclick="gfg(1)" class="star">★ </span>
+                <span onclick="gfg(2)" class="star">★ </span>
+                <span onclick="gfg(3)" class="star">★ </span>
+                <span onclick="gfg(4)" class="star">★ </span>
+                <span onclick="gfg(5)" class="star">★ </span>
+                <h3 id="output">Rating is: 0/5</h3>
+                <input
+                  type="hidden"
+                  id="rating-input"
+                  name="ratings"
+                  value="0"
+                />
+              </div>
+            </div>
+            <button
+              type="submit"
+              class="w-full py-2 bg-white text-bgPurple uppercase font-bold rounded-md"
+            >
+              Submit
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  // Toggle modal visibility
+  document.addEventListener("DOMContentLoaded", function () {
+    // Existing event listeners
+
+    document.querySelectorAll("[data-modal-toggle]").forEach(function (toggle) {
+      toggle.addEventListener("click", function () {
+        const modalId = toggle.getAttribute("data-modal-target");
+        const modal = document.getElementById(modalId);
+        const overlay = document.getElementById("overlay");
+
+        // Toggle modal visibility
+        modal.classList.toggle("hidden");
+
+        // Show or hide the overlay based on the modal state
+        if (!modal.classList.contains("hidden")) {
+          overlay.classList.remove("hidden");
+        } else {
+          overlay.classList.add("hidden");
+        }
+      });
+    });
+
+    document
+      .querySelectorAll("[data-modal-hide]")
+      .forEach(function (hideButton) {
+        hideButton.addEventListener("click", function () {
+          const modal = hideButton.closest(".fixed");
+          const overlay = document.getElementById("overlay");
+
+          // Hide modal and overlay
+          modal.classList.add("hidden");
+          overlay.classList.add("hidden");
+        });
+      });
+  });
+
+  let stars = document.getElementsByClassName("star");
+  let output = document.getElementById("output");
+  let ratingInput = document.getElementById("rating-input");
+
+  function gfg(n) {
+    ratingInput.value = n;
+    console.log("Rating Input Value:", ratingInput.value);
+
+    remove();
+    // Update star classes based on rating
+    for (let i = 0; i < n; i++) {
+      let cls = "";
+      if (n == 1) cls = "one";
+      else if (n == 2) cls = "two";
+      else if (n == 3) cls = "three";
+      else if (n == 4) cls = "four";
+      else if (n == 5) cls = "five";
+
+      stars[i].className = "star " + cls;
+    }
+
+    output.innerText = "Rating is: " + n + "/5";
+  }
+
+  // To remove the pre-applied styling
+  function remove() {
+    let i = 0;
+    while (i < 5) {
+      stars[i].className = "star";
+      i++;
+    }
+  }
+
+  function likeReview(reviewId, status) {
+    console.log("Review ID:", reviewId);
+    fetch("/like-review", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ reviewId: reviewId }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          // alert('Review liked!');
+          window.location.reload(); // Reload the page
+        } else {
+          alert("Failed to like review.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("Failed to like review.");
+      });
+  }
+</script>
+{%endblock%}

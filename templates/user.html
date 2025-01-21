@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/user.css') }}"/>
+{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center min-h-screen pb-32">
+  
+  <div
+    class="w-4/5 bg-gradient-to-b from-black to-transparent p-6 rounded-2xl flex flex-col items-center relative mt-28"
+  >
+<!-- Edit profile button -->
+<button data-modal-target="edit-profile-modal" data-modal-toggle="edit-profile-modal" class="absolute top-8 right-8 bg-transparent border-solid border-[1px] text-white px-4 py-2 rounded-md">Edit Profile</button>
+<!-- <a href="{{ url_for('edit_profile') }}" class="absolute top-8 right-8 bg-transparent border-solid border-[1px] text-white px-4 py-2 rounded-md">Edit Profile</a> -->
+<div class="p-4 w-full mb-4 rounded-md">
+          <!-- Profile image and info -->
+          <div class="flex flex-row gap-6 items-end">
+            <!-- Profile image circle -->
+            <div class="circle-bg w-36 h-36 rounded-full mr-8" style="background-image: url('{{user.profile_pic}}');"></div>
+            <!-- <p>{{profile_pic}}</p> -->
+
+            <!-- Grid for profile info -->
+            <div class="flex flex-col h-full">
+              <h1 class="text-4xl font-bold text-white">{{user.username}}<h1>
+
+              <div class="flex flex-row pt-4 gap-10">
+                <div class="flex flex-col items-center">
+                  <div class="text-txtPurple font-bold text-3xl">{{movie_count}}</div>
+                  <p class="text-white text-md">Films</p>
+                </div>
+                <div class="flex flex-col items-center">
+                  <div class="text-txtPurple font-bold text-3xl">{{show_count}}</div>
+                  <p class="text-white text-md">Series</p>
+                </div>
+                <div class="flex flex-col items-center">
+                  <div class="text-txtPurple font-bold text-3xl">{{ '%.1f' | format(movie_hours / 60) }}</div>                      <p class="text-white text-md">Hours</p>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <div
+    class="w-4/5 px-10 items-center "
+  >
+  <!-- Top actors (We cant do this no actor image table)-->
+  <!-- <div class="pt-14 w-full">
+    <h2 class="text-white text-2xl font-bold">Top Actors</h2>
+    <div class="flex flex-row flex-wrap gap-16 pt-4">
+
+        <div class="flex flex-col items-center">
+            <div class="circle-bg w-32 h-32 bg-gray-300 rounded-full mb-2" style="background-image: url('https://image.tmdb.org/t/p/original/dlS1CKO8Dh2lORhE73WosZ4bRt2.jpg');"></div>
+            <p class="text-white text-lg">Actor Name</p>
+        </div>
+        <div class="flex flex-col items-center">
+          <div class="circle-bg w-32 h-32 bg-gray-300 rounded-full mb-2" style="background-image: url('https://image.tmdb.org/t/p/original/1q6oro0xSrqvXzQSGQHeosmQarz.jpg');"></div>
+          <p class="text-white text-lg">Actor Name</p>
+        </div>
+        <div class="flex flex-col items-center">
+          <div class="circle-bg w-32 h-32 bg-gray-300 rounded-full mb-2" style="background-image: url('https://image.tmdb.org/t/p/original/gT5FgaCTKIImcu0FTQV18tasdno.jpg');"></div>
+          <p class="text-white text-lg">Actor Name</p>
+        </div>
+        <div class="flex flex-col items-center">
+          <div class="circle-bg w-32 h-32 bg-gray-300 rounded-full mb-2" style="background-image: url('https://image.tmdb.org/t/p/original/gJeCBrAyK8R9CVBFjXFdCJhflvf.jpg');"></div>
+          <p class="text-white text-lg">Actor Name</p>
+        </div>
+        <div class="flex flex-col items-center">
+          <div class="circle-bg w-32 h-32 bg-gray-300 rounded-full mb-2" style="background-image: url('https://image.tmdb.org/t/p/original/9BrMqY78Eh1YnbkLinE8OWwhfM5.jpg');"></div>
+          <p class="text-white text-lg">Actor Name</p>
+        </div>
+    </div>
+  </div> -->
+
+  <!-- Top Actors -->
+  <div class="pt-20 w-full">
+    <h2 class="text-white text-2xl font-semibold">Top Actors</h2>
+    <div class="flex flex-row flex-wrap gap-5 pt-4">
+      {% for actor in top_actors %}
+        <div class="flex flex-col items-center gap-2">
+            <p class="text-white text-lg bg-white bg-opacity-30 rounded-md border-solid border-[1px] py-1 px-5">{{ actor.name }}</p>
+        </div>
+      {% endfor %}
+        
+    </div>
+  </div>
+
+  <!-- Top Genres -->
+  <div class="pt-20 w-full">
+    <h2 class="text-white text-2xl font-semibold">Top Genres</h2>
+    <div class="flex flex-row flex-wrap gap-5 pt-4">
+      {% for genre in top_genres %}
+        <div class="flex flex-col items-center gap-2">
+            <p class="text-white text-lg bg-white bg-opacity-30 rounded-md border-solid border-[1px] py-1 px-5">{{ genre.name }}</p>
+        </div>
+      {% endfor %}
+        
+    </div>
+</div>
+<!-- Recently watched-->
+<section class="carousel-container pt-20 w-full">
+  <h3 class="text-white text-2xl font-semibold">Recently watched</h3>
+  <div class="relative overflow-hidden">
+      <section class="carousel flex flex-row space-x-4 pt-4">
+          {% for show in watched_shows_images %}
+          <div class="w-[300px] h-[180px] rounded-xl bg-slate-400">
+            <a href="/details/{{show.show_id}}">
+                <img src="{{show.image}}" alt="show" class="w-full h-full object-cover rounded-xl">
+            </a>
+          </div>
+          {% endfor %}
+      </section>
+      <button class="carousel-btn left-btn" onclick="scrollCarouselLeft(this)">
+          <i class="fas fa-chevron-left"></i>
+      </button>
+      <button class="carousel-btn right-btn" onclick="scrollRight(this)">
+          <i class="fas fa-chevron-right"></i>
+      </button>
+  </div>
+  </section>
+</div>
+</div>
+
+<div id="overlay" class="hidden fixed inset-0 bg-black opacity-50"></div>
+<div id="edit-profile-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed inset-0 z-50 flex items-center justify-center w-full h-full">
+  <div class="relative p-4 w-full max-w-md max-h-full">
+      <!-- Modal content -->
+      <div class="relative rounded-lg shadow bg-bgPurple">
+          <!-- Modal header -->
+          <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+              <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                  Edit Profile
+              </h3>
+              <button type="button" class="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="edit-profile-modal">
+                  <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                  </svg>
+                  <span class="sr-only">Close modal</span>
+              </button>
+          </div>
+
+          <!-- Modal body -->
+          <div class="p-6 md:p-5">
+              <form id="profile-form" class="space-y-4" action="/edit-profile" method="post" enctype="multipart/form-data">
+                  <!-- Profile image circle -->
+                  <div class="flex justify-center mb-4">
+                    <!-- Hidden file input -->
+                    <input type="file" id="profileImageInput" accept="image/*" class="hidden" name="profile_pic">
+
+                    <div class="group w-24 h-24 bg-gray-300 rounded-full circle-bg cursor-pointer hover:bg-black" 
+                    id="profileImageCircle"
+                    style="background-image: url('{{user.profile_pic}}');"
+                    onclick="document.getElementById('profileImageInput').click();">
+
+                    <!-- Overlay on hover -->
+                      <div class="flex flex-col gap-1 size-24 rounded-full invisible group-hover:visible  
+                        absolute bg-black bg-opacity-50 text-white items-center justify-center">
+
+                        <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <g clip-path="url(#clip0_139_188)">
+                          <path d="M23.4375 18.75C23.4375 19.1644 23.2729 19.5618 22.9799 19.8549C22.6868 20.1479 22.2894 20.3125 21.875 20.3125H3.125C2.7106 20.3125 2.31317 20.1479 2.02015 19.8549C1.72712 19.5618 1.5625 19.1644 1.5625 18.75V9.375C1.5625 8.9606 1.72712 8.56317 2.02015 8.27015C2.31317 7.97712 2.7106 7.8125 3.125 7.8125H4.95625C6.19881 7.81182 7.39026 7.31782 8.26875 6.43906L9.56563 5.14531C9.85782 4.85303 10.2539 4.68842 10.6672 4.6875H14.3297C14.7441 4.68759 15.1414 4.85227 15.4344 5.14531L16.7281 6.43906C17.1635 6.87455 17.6804 7.22 18.2493 7.45566C18.8182 7.69132 19.428 7.81257 20.0438 7.8125H21.875C22.2894 7.8125 22.6868 7.97712 22.9799 8.27015C23.2729 8.56317 23.4375 8.9606 23.4375 9.375V18.75ZM3.125 6.25C2.2962 6.25 1.50134 6.57924 0.915291 7.16529C0.32924 7.75134 0 8.5462 0 9.375L0 18.75C0 19.5788 0.32924 20.3737 0.915291 20.9597C1.50134 21.5458 2.2962 21.875 3.125 21.875H21.875C22.7038 21.875 23.4987 21.5458 24.0847 20.9597C24.6708 20.3737 25 19.5788 25 18.75V9.375C25 8.5462 24.6708 7.75134 24.0847 7.16529C23.4987 6.57924 22.7038 6.25 21.875 6.25H20.0438C19.215 6.24982 18.4203 5.92047 17.8344 5.33438L16.5406 4.04062C15.9547 3.45453 15.16 3.12518 14.3313 3.125H10.6687C9.84002 3.12518 9.04529 3.45453 8.45938 4.04062L7.16563 5.33438C6.57971 5.92047 5.78498 6.24982 4.95625 6.25H3.125Z" fill="white"/>
+                          <path d="M12.5 17.1875C11.464 17.1875 10.4704 16.7759 9.73786 16.0434C9.0053 15.3108 8.59375 14.3173 8.59375 13.2812C8.59375 12.2452 9.0053 11.2517 9.73786 10.5191C10.4704 9.78655 11.464 9.375 12.5 9.375C13.536 9.375 14.5296 9.78655 15.2621 10.5191C15.9947 11.2517 16.4062 12.2452 16.4062 13.2812C16.4062 14.3173 15.9947 15.3108 15.2621 16.0434C14.5296 16.7759 13.536 17.1875 12.5 17.1875ZM12.5 18.75C13.9504 18.75 15.3414 18.1738 16.367 17.1482C17.3926 16.1227 17.9688 14.7317 17.9688 13.2812C17.9688 11.8308 17.3926 10.4398 16.367 9.41426C15.3414 8.38867 13.9504 7.8125 12.5 7.8125C11.0496 7.8125 9.6586 8.38867 8.63301 9.41426C7.60742 10.4398 7.03125 11.8308 7.03125 13.2812C7.03125 14.7317 7.60742 16.1227 8.63301 17.1482C9.6586 18.1738 11.0496 18.75 12.5 18.75ZM4.6875 10.1562C4.6875 10.3635 4.60519 10.5622 4.45868 10.7087C4.31216 10.8552 4.11345 10.9375 3.90625 10.9375C3.69905 10.9375 3.50034 10.8552 3.35382 10.7087C3.20731 10.5622 3.125 10.3635 3.125 10.1562C3.125 9.94905 3.20731 9.75034 3.35382 9.60382C3.50034 9.45731 3.69905 9.375 3.90625 9.375C4.11345 9.375 4.31216 9.45731 4.45868 9.60382C4.60519 9.75034 4.6875 9.94905 4.6875 10.1562Z" fill="white"/>
+                          </g>
+                          <defs>
+                          <clipPath id="clip0_139_188">
+                          <rect width="25" height="25" fill="white"/>
+                          </clipPath>
+                          </defs>
+                        </svg>
+                        <p class="text-xs">Add photo <p>
+                      </div> 
+                    </div>
+                    
+                    
+                  </div>
+
+                  <!-- Inputs -->
+                  <div class="pb-4">
+                      <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
+                      <input type="email" name="email" id="email" class="bg-transparent border border-white text-white text-sm rounded-lg block w-full p-2.5" placeholder="name@company.com" value="{{user.email}}" required />
+                  </div>
+                  <div>
+                      <label for="display-name" class="block mb-2 text-sm font-medium text-white">Password</label>
+                      <input type="password" name="password" id="display-name" class="bg-transparent border border-white text-white text-sm rounded-lg block w-full p-2.5 " placeholder="Your display name" value="{{user.password}}" required />
+                  </div>
+                  <button type="submit" class="w-full py-2 bg-white text-bgPurple  uppercase font-bold rounded-md">Save</button>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script>
+    function scrollCarouselLeft(button) {
+      const carousel = button.parentElement.querySelector(".carousel");
+      carousel.scrollBy({
+        left: -300,
+        behavior: "smooth",
+      });
+    }
+
+    function scrollRight(button) {
+      const carousel = button.parentElement.querySelector(".carousel");
+      carousel.scrollBy({
+        left: 300,
+        behavior: "smooth",
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      // Existing event listeners
+
+      document
+        .querySelectorAll("[data-modal-toggle]")
+        .forEach(function (toggle) {
+          toggle.addEventListener("click", function () {
+            const modalId = toggle.getAttribute("data-modal-target");
+            const modal = document.getElementById(modalId);
+            const overlay = document.getElementById("overlay");
+
+            // Toggle modal visibility
+            modal.classList.toggle("hidden");
+
+            // Show or hide the overlay based on the modal state
+            if (!modal.classList.contains("hidden")) {
+              overlay.classList.remove("hidden");
+            } else {
+              overlay.classList.add("hidden");
+            }
+          });
+        });
+
+      document
+        .querySelectorAll("[data-modal-hide]")
+        .forEach(function (hideButton) {
+          hideButton.addEventListener("click", function () {
+            const modal = hideButton.closest(".fixed");
+            const overlay = document.getElementById("overlay");
+
+            // Hide modal and overlay
+            modal.classList.add("hidden");
+            overlay.classList.add("hidden");
+          });
+        });
+    });
+
+    // Select the form by its ID
+    const form = document.getElementById("profile-form");
+
+    // Add an event listener for the form's submit event
+    // form.addEventListener("submit", function (event) {
+    //   // Prevent the default form submission
+    //   event.preventDefault();
+
+    //   // Capture the values from the "Display Name" and "Email" inputs
+    //   const displayName = document.getElementById("display-name").value;
+    //   const email = document.getElementById("email").value;
+
+    //   // Log the captured values
+    //   console.log(`Display Name: ${displayName}, Email: ${email}`);
+    // });
+
+
+    // Function to handle file selection
+  function handleFileSelect() {
+    const input = document.getElementById('profileImageInput');
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+        const preview = document.getElementById('profileImageCircle');
+        preview.style.backgroundImage = "url('" + e.target.result + "')";
+    };
+
+    if(input.files && input.files[0]) {
+        reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  // Attach the file select handler to the input
+  document.getElementById('profileImageInput').addEventListener('change', handleFileSelect);
+</script>
+{% endblock %}

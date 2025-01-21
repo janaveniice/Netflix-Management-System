@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Profile</title>
+    <link
+      href="{{ url_for('static',filename='css/output.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swiper/swiper-bundle.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/user.css') }}"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  </head>
+  <body class="bg-bgPurple text-white">
+    <header
+      class="fixed w-full bg-gradient-to-b from-black to-transparent z-10"
+    >
+      <nav class="pt-8 px-16 h-24 mx-auto">
+        <div class="flex flex-row justify-between">
+          <div class="flex items-center justify-start">
+            <div class="text-white font-bold text-2xl">
+              <a href="#">LOGO</a>
+            </div>
+            <div class="hidden md:block pl-8 text-xl">
+              <ul class="flex items-center space-x-10">
+                <li class="hover:border-b-2 border-white">
+                  <a href="/homepage/{{username}}" class="text-white">Home</a>
+                </li>
+                <li class="hover:border-b-2 border-white">
+                  <a href="/content/{{username}}" class="text-white">Browse</a>
+                </li>
+                <li class="hover:border-b-2 border-white">
+                  <a href="/watchlist" class="text-white">Watchlist</a>
+                </li>
+                <li class="hover:border-b-2 border-white">
+                  <a href="/watch-history" class="text-white">Watch History</a>
+                </li>
+
+                <li>
+                  <!-- SEARCH BAR -->
+                  <form action="/search" method="get">
+                    <div
+                      class="flex appearance-none border-2 rounded-xl h-10 sm:max-w-screen-sm text-white"
+                    >
+                      <button
+                        class="flex items-center justify-center px-3"
+                        type="submit"
+                      >
+                        <svg
+                          class="w-5 h-5"
+                          fill="white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M16.32 14.9l5.39 5.4a1 1 0 0 1-1.42 1.4l-5.38-5.38a8 8 0 1 1 1.41-1.41zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z"
+                          ></path>
+                        </svg>
+                      </button>
+                      <input
+                        type="text"
+                        name="q"
+                        class="appearance-none bg-transparent py-2 w-64 text-white text-sm placeholder-white focus:outline-none border-none"
+                        autocomplete="off"
+                        style="background-color: transparent"
+                        placeholder="Titles, Casts, Genres"
+                      />
+                    </div>
+                  </form>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="">
+            <a href="/profile"
+              ><svg
+                class="w-8 h-8"
+                viewBox="0 0 44 44"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M12.2222 9.77778C12.2222 7.18455 13.2524 4.69753 15.0861 2.86384C16.9198 1.03016 19.4068 0 22 0C24.5932 0 27.0802 1.03016 28.9139 2.86384C30.7476 4.69753 31.7778 7.18455 31.7778 9.77778C31.7778 12.371 30.7476 14.858 28.9139 16.6917C27.0802 18.5254 24.5932 19.5556 22 19.5556C19.4068 19.5556 16.9198 18.5254 15.0861 16.6917C13.2524 14.858 12.2222 12.371 12.2222 9.77778ZM12.2222 24.4444C8.98069 24.4444 5.87192 25.7321 3.57981 28.0243C1.28769 30.3164 0 33.4251 0 36.6667C0 38.6116 0.772617 40.4768 2.14788 41.8521C3.52315 43.2274 5.38841 44 7.33333 44H36.6667C38.6116 44 40.4768 43.2274 41.8521 41.8521C43.2274 40.4768 44 38.6116 44 36.6667C44 33.4251 42.7123 30.3164 40.4202 28.0243C38.1281 25.7321 35.0193 24.4444 31.7778 24.4444H12.2222Z"
+                  fill="white"
+                />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <div class="flex flex-col items-center justify-center min-h-screen pb-32">
+      <div
+        class="w-4/5 bg-gradient-to-b from-black to-transparent p-6 rounded-2xl flex flex-col items-center relative mt-28"
+      >
+        <h1 class="text-4xl font-bold mb-8">Edit Profile</h1>
+        {%block content%}
+        <form
+          id="profile-form"
+          class="space-y-4 w-full max-w-lg"
+          action="{{ url_for('edit_profile') }}"
+          method="post"
+          enctype="multipart/form-data"
+        >
+          <div class="flex justify-center mb-4">
+            <input
+              type="file"
+              id="profile_pic"
+              name="profile_pic"
+              accept="image/*"
+              class="hidden"
+            />
+            <div
+              class="group w-24 h-24 bg-gray-300 rounded-full circle-bg cursor-pointer bg-[url('{{user.profile_pic}}')] hover:bg-black"
+              id="profileImageCircle"
+              onclick="document.getElementById('profile_pic').click();"
+              style="background-image: url('{{user.profile_pic}}');"
+            >
+              <div
+                class="flex flex-col gap-1 size-24 rounded-full invisible group-hover:visible absolute bg-black bg-opacity-50 text-white items-center justify-center"
+              >
+                <svg
+                  width="25"
+                  height="25"
+                  viewBox="0 0 25 25"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g clip-path="url(#clip0_139_188)">
+                    <path
+                      d="M23.4375 18.75C23.4375 19.1644 23.2729 19.5618 22.9799 19.8549C22.6868 20.1479 22.2894 20.3125 21.875 20.3125H3.125C2.7106 20.3125 2.31317 20.1479 2.02015 19.8549C1.72712 19.5618 1.5625 19.1644 1.5625 18.75V9.375C1.5625 8.9606 1.72712 8.56317 2.02015 8.27015C2.31317 7.97712 2.7106 7.8125 3.125 7.8125H4.95625C6.19881 7.81182 7.39026 7.31782 8.26875 6.43906L9.56563 5.14531C9.85782 4.85303 10.2539 4.68842 10.6672 4.6875H14.3297C14.7441 4.68759 15.1414 4.85227 15.4344 5.14531L16.7281 6.43906C17.1635 6.87455 17.6804 7.22 18.2493 7.45566C18.8182 7.69132 19.428 7.81257 20.0438 7.8125H21.875C22.2894 7.8125 22.6868 7.97712 22.9799 8.27015C23.2729 8.56317 23.4375 8.9606 23.4375 9.375V18.75Z"
+                      stroke="white"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M12.5 17.1875C13.6188 17.1875 14.6895 16.7606 15.4772 15.9728C16.265 15.185 16.6919 14.1142 16.6919 12.9953C16.6919 11.8763 16.265 10.8055 15.4772 10.0177C14.6895 9.22996 13.6188 8.80305 12.5 8.80305C11.381 8.80305 10.3102 9.22996 9.52243 10.0177C8.73467 10.8055 8.30776 11.8763 8.30776 12.9953C8.30776 14.1142 8.73467 15.185 9.52243 15.9728C10.3102 16.7606 11.381 17.1875 12.5 17.1875Z"
+                      stroke="white"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_139_188">
+                      <rect width="25" height="25" fill="white" />
+                    </clipPath>
+                  </defs>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <!--<div class="flex flex-col">
+            <label for="name" class="text-lg font-semibold">Name</label>
+            <input type="text" id="name" name="name" class="px-3 py-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none" value="{{ user.name }}" required />
+            </div>-->
+          <div class="flex flex-col">
+            <label for="email" class="text-lg font-semibold">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="px-3 py-2 rounded bg-gray-700 text-black border border-gray-600 focus:outline-none"
+              value="{{ user.email }}"
+              required
+            />
+          </div>
+          <div class="flex flex-col">
+            <label for="password" class="text-lg font-semibold">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="px-3 py-2 rounded bg-gray-700 text-black border border-gray-600 focus:outline-none"
+              value="{{ user.password }}"
+              required
+            />
+          </div>
+          <div class="flex justify-center mt-6">
+            <button
+              type="submit"
+              class="px-6 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+              value="Submit"
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+        {%endblock%}
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/profile.js') }}"></script>
+  </body>
+</html>

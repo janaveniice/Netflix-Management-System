@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Default Title{% endblock %}</title>
+    <link
+      href="{{url_for('static',filename='css/output.css')}}"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swiper/swiper-bundle.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/home.css') }}"
+    />
+    <!-- to add extra link/ref to specific template -->
+    {% block extra_head %} {% endblock %}
+    <script
+      defer
+      src="https://use.fontawesome.com/releases/v5.15.4/js/all.js"
+      integrity="sha384-rOA1PnstxnOBLzCLMcre8ybwbTmemjzdNlILg8O7z1lUkLXozs4DHonlDtnE7fpc"
+      crossorigin="anonymous"
+    ></script>
+    <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  </head>
+  <body class="bg-bgPurple">
+    <header
+      class="fixed w-full bg-gradient-to-b from-black to-transparent z-10"
+    >
+      <nav class="pt-8 px-16 h-24 mx-auto">
+        <div class="flex flex-row justify-between">
+          <div class="flex items-center justify-start">
+            <div class="text-white font-bold text-2xl">
+              <a href="/homepage/{{username}}">DBG4</a>
+            </div>
+            <div class="hidden md:block pl-8 text-xl">
+              <ul class="flex items-center space-x-10">
+                <li class="hover:border-b-2 border-white">
+                  <a href="/homepage/{{username}}" class="text-white">Home</a>
+                </li>
+                <li class="hover:border-b-2 border-white">
+                  <a href="/content/{{username}}" class="text-white">Browse</a>
+                </li>
+                <li class="hover:border-b-2 border-white">
+                  <a href="/watchlist" class="text-white">Watchlist</a>
+                </li>
+                <li class="hover:border-b-2 border-white">
+                  <a href="/watch-history" class="text-white">Watch History</a>
+                </li>
+                <li class="hover:border-b-2 border-white">
+                  <a href="/forum/{{username}}" class="text-white">Forum</a>
+                </li>
+
+                <li>
+                  <!-- SEARCH BAR -->
+                  <form action="/search" method="get">
+                    <div
+                      class="flex appearance-none border-2 rounded-xl h-10 sm:max-w-screen-sm text-white"
+                    >
+                      <button
+                        class="flex items-center justify-center px-3"
+                        type="submit"
+                      >
+                        <svg
+                          class="w-5 h-5"
+                          fill="white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M16.32 14.9l5.39 5.4a1 1 0 0 1-1.42 1.4l-5.38-5.38a8 8 0 1 1 1.41-1.41zM10 16a6 6 0 1 0 0-12 6 6 0 0 0 0 12z"
+                          ></path>
+                        </svg>
+                      </button>
+                      <input
+                        type="text"
+                        name="q"
+                        class="appearance-none bg-transparent py-2 w-64 text-white text-sm placeholder-white focus:outline-none border-none"
+                        autocomplete="off"
+                        style="background-color: transparent"
+                        placeholder="Titles, Casts, Genres"
+                      />
+                    </div>
+                  </form>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="profile pic">
+            <button
+              class="relative group transition-all duration-200 focus:overflow-visible overflow-hidden flex flex-row items-center"
+            >
+              <div
+                class="bg-cover bg-center w-10 h-10 bg-gray-300 rounded-full mr-8"
+                style="background-image: url('{{user.profile_pic}}');"
+              ></div>
+              <div
+                class="absolute shadow-lg -bottom-44 right-0 left-auto h-max w-[170px] p-2 bg-txtPurple border border-zinc-200 rounded-lg flex flex-col gap-2"
+              >
+                <span
+                  class="flex flex-row gap-2 items-center hover:bg-bgPurple rounded-lg p-2"
+                  onclick="window.location.href='/profile';"
+                >
+                  <span class="">My Profile</span>
+                </span>
+                <span
+                  class="flex flex-row gap-2 items-center hover:bg-bgPurple rounded-lg p-2"
+                  onclick="window.location.href='/my-reviews';"
+                >
+                  <span class="">My Reviews</span>
+                </span>
+                <span
+                  class="flex flex-row gap-2 items-center hover:bg-bgPurple rounded-lg p-2"
+                  onclick="window.location.href='/user-forum/{{username}}';"
+                >
+                  <span class="">My Posts</span>
+                </span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    {% block content %} {% endblock %}
+  </body>
+</html>

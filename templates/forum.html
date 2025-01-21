@@ -1,0 +1,61 @@
+{% extends "base.html" %} {% block title %} Details {% endblock %} {% block
+content %}
+<div class="min-h-lvh mx-auto">
+  <div class="flex flex-col p-24">
+    <ul class="rounded-lg shadow w-full text-white">
+      <!-- Button Container -->
+      <div class="flex gap-4">
+        <!-- Create Discussion Button -->
+        <form action="/discussion/{{ user.username }}" method="GET">
+          <button
+            type="submit"
+            class="inline-flex items-center gap-x-4 rounded-md bg-white px-6 py-2 shadow-sm hover:bg-gray-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+          >
+            <span class="text-black font-semibold text-lg"
+              >Create Discussion</span
+            >
+          </button>
+        </form>
+        <!-- My Discussions Button -->
+        <form action="/user-forum/{{ user.username }}" method="GET">
+          <button
+            type="submit"
+            class="inline-flex items-center gap-x-4 rounded-md bg-white px-6 py-2 shadow-sm hover:bg-gray-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+          >
+            <span class="text-black font-semibold text-lg">My Discussions</span>
+          </button>
+        </form>
+      </div>
+      {% for post in posts %}
+      <li class="border-b border-gray-200 py-4">
+        <a
+          href="/forum-details/{{ user.username }}/{{ post._id }}"
+          class="block"
+        >
+          <div class="flex justify-between items-center">
+            <div class="flex items-center">
+              <!--Displaying author profile picture-->
+              <!--<div class="w-10 h-10 rounded-full bg-white mr-4 flex items-center justify-center">
+                                
+                            </div>-->
+              <div>
+                <!--Displaying author name and topic-->
+                <p class="font-semibold text-xl mt-2">{{ post.topic_name }}</p>
+                <span class="text-xs"
+                  >Created by: {{ post.author_id }}, {{
+                  post.created_at.strftime('%d %B %Y') }}</span
+                >
+              </div>
+            </div>
+            <!--Displaying numbers of replies-->
+            <span class="text-xs">{{ post.replies|length }} replies</span>
+          </div>
+          <!--Displaying post content-->
+          <p class="mt-4 line-clamp-3">{{ post.content }}</p>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}
