@@ -1,4 +1,4 @@
-# DB-Project
+# DBG4: Netflix Management System
 
 Efficient data management is essential for the Netflix Management System application to be implemented successfully. Our project demonstrated the efficacy of combining relational (MariaDB) and non-relational (MongoDB) databases. MariaDB excelled in handling structured data like user profiles, show details, and watch history, while MongoDB's flexibility accommodated the dynamic nature of reviews and discussions. This hybrid approach enhanced system performance, scalability, and data management. Follow the instructions below to setup the application to run. Ensure both MYSQL and MongoDB are setup. <br>
 
@@ -19,8 +19,8 @@ PASSWORD = ''<br />
 HOST = ''<br />
 DBNAME = 'netflix'
 
-`models.py`: Update lines 8-11<br />
-`NetflixApp.py`: Update lines 57-60
+`models.py` : Update lines 8-11<br />
+`NetflixApp.py` : Update lines 57-60
 
 ## Ensure port is 27017 for MongoDB else update the port (Non-Relational Database)
 
